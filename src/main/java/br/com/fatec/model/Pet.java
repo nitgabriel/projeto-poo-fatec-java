@@ -10,7 +10,46 @@ public class Pet {
     private String raca;
     private LocalDate dataNascimento;
     private Dono dono;
+    
+    // Construtores
 
+    public Pet(Dono dono) {
+        this.dono = dono;
+    }
+
+    public Pet(int idPet, String nome, String especie, String numeroConveniado, String raca, LocalDate dataNascimento, Dono dono) {
+        this.idPet = idPet;
+        this.nome = nome;
+        this.especie = especie;
+        this.numeroConveniado = numeroConveniado;
+        this.raca = raca;
+        this.dataNascimento = dataNascimento;
+        this.dono = dono;
+    }
+    
+    // Equals e HashCode
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + this.idPet;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Pet other = (Pet) obj;
+        return this.idPet == other.idPet;
+    }
+    
     // Getters e Setters
     public int getId() {
         return idPet;
