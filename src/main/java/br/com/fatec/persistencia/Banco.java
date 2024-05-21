@@ -1,4 +1,4 @@
-package br.com.fatec.DAO;
+package br.com.fatec.persistencia;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,17 +14,14 @@ public class Banco {
     private static int porta = 3306;
     
     //variaveis de banco
-    private static Connection conexao;
+    private static Connection conexao = null;
     
     public static void conectar() 
-            throws ClassNotFoundException, 
+            throws 
                    SQLException {
         String url="jdbc:mysql://" + servidor +
                    ":" + porta +
                    "/" + bd;
-     
-        //carregar o driver
-        Class.forName("com.mysql.jdbc.Driver");
         
         //Conectar ao banco
         conexao = DriverManager.getConnection(url, usuario, senha);
