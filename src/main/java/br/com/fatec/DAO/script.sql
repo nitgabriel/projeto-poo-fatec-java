@@ -37,6 +37,16 @@ CREATE TABLE Pets (
     FOREIGN KEY (idDono) REFERENCES Donos(idDono)
 );
 
+-- Criando a tabela de unidades
+CREATE TABLE Unidades (
+    -- Identificador único da unidade
+    idUnidade INT PRIMARY KEY AUTO_INCREMENT,
+    -- Nome da unidade específica
+    nome VARCHAR(50) NOT NULL,
+    -- Endereço da unidade
+    endereco VARCHAR(100) NOT NULL
+);
+
 -- Criando a tabela de Veterinários
 CREATE TABLE Veterinarios (
     -- Identificador único do veterinário
@@ -46,11 +56,12 @@ CREATE TABLE Veterinarios (
     -- CRMV do veterinário (único)
     crmv VARCHAR(20) UNIQUE NOT NULL,
     -- Unidade onde o veterinário atua
-    unidadeAtuacao VARCHAR(100) NOT NULL,
+    idUnidade INT NOT NULL,
     -- Status do veterinário (ex: Ativo, Inativo)
     status VARCHAR(20) NOT NULL,
     -- Especialidade do veterinário (ex: clínica geral, cirurgia)
-    especialidade VARCHAR(100) NOT NULL
+    especialidade VARCHAR(100) NOT NULL,
+    FOREIGN KEY (idUnidade) REFERENCES Unidades(idUnidade)
 );
 
 -- Criando a tabela de Agendamentos
@@ -64,7 +75,7 @@ CREATE TABLE Agendamentos (
     -- Veterinário do agendamento (chave estrangeira)
     idVeterinario INT NOT NULL,
     -- Unidade do agendamento
-    unidade VARCHAR(100) NOT NULL,
+    idUnidade INT NOT NULL,
     -- Especialidade do agendamento (pode ser diferente da especialidade do veterinário)
     especialidade VARCHAR(100) NOT NULL,
     -- Data do agendamento
@@ -73,33 +84,6 @@ CREATE TABLE Agendamentos (
     horario TIME NOT NULL,
     FOREIGN KEY (idDono) REFERENCES Donos(idDono),
     FOREIGN KEY (idPet) REFERENCES Pets(idPet),
-    FOREIGN KEY (idVeterinario) REFERENCES Veterinarios(idVeterinario)
-);
-
--- Criando a tabela de Medicamentos
-CREATE TABLE Medicamentos (
-    -- Identificador único do medicamento
-    idMedicamento INT PRIMARY KEY AUTO_INCREMENT,
-    -- Nome do medicamento
-    nomeMedicamento VARCHAR(255) NOT NULL,
-    -- Data de validade do medicamento
-    dataValidade DATE NOT NULL,
-    -- Dosagem recomendada do medicamento
-    dosagem VARCHAR(50) NOT NULL,
-    -- Preço do medicamento
-    preco DECIMAL(10, 2) NOT NULL,
-    -- Descrição do medicamento
-    descricao TEXT NOT NULL
-);
-
--- Criando a tabela intermediária para a relação muitos-para-muitos entre Agendamentos e Medicamentos
-CREATE TABLE AgendamentosMedicamentos (
-    -- Chave estrangeira do agendamento
-    idAgendamento INT NOT NULL,
-    -- Chave estrangeira do medicamento
-    idMedicamento INT NOT NULL,
-    FOREIGN KEY (idAgendamento) REFERENCES Agendamentos(idAgendamento),
-    FOREIGN KEY (idMedicamento) REFERENCES Medicamentos(idMedicamento),
-    -- Chave primária composta para garantir unicidade
-    PRIMARY KEY (idAgendamento, idMedicamento)
+    FOREIGN KEY (idVeterinario) REFERENCES Veterinarios(idVeterinario),
+    FOREIGN KEY (idUnidade) REFERENCES Unidades(idUnidade)
 );
