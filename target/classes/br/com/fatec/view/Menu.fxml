@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="main" fx:id="main" focusTraversable="true" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.MenuController" >
+   <children>
+      <Button fx:id="btnGerenciarPets" layoutX="607.0" layoutY="50.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarPets_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR PETS" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnGerenciarDonos" layoutX="607.0" layoutY="110.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarDonos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR PROPRIETÁRIOS" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnGerenciarVeterinarios" layoutX="607.0" layoutY="170.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarVeterinarios_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR VETERINÁRIOS" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnGerenciarAgendamentos" layoutX="607.0" layoutY="230.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarAgendamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR AGENDAMENTOS" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnGerenciarMedicamentos" layoutX="607.0" layoutY="290.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarMedicamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR MEDICAMENTOS" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnGerenciarUnidades" layoutX="607.0" layoutY="350.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnGerenciarUnidades_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="GERENCIAR UNIDADES" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnConsultarInfo" layoutX="607.0" layoutY="410.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarInfo_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="CONSULTAR INFORMAÇÕES" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+   </children>
+</AnchorPane>
