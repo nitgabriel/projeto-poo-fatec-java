@@ -43,8 +43,18 @@ CREATE TABLE Unidades (
     idUnidade INT PRIMARY KEY AUTO_INCREMENT,
     -- Nome da unidade específica
     nome VARCHAR(50) NOT NULL,
-    -- Endereço da unidade
-    endereco VARCHAR(100) NOT NULL
+    -- Cep
+    cep INT NOT NULL,
+    -- Rua
+    rua VARCHAR(50) NOT NULL,
+    -- Bairro
+    bairro VARCHAR(50) NOT NULL,
+    -- Cidade
+    cidade VARCHAR(50) NOT NULL,
+    -- UF
+    uf VARCHAR(2) NOT NULL,
+    -- Número
+    numero VARCHAR(50) NOT NULL
 );
 
 -- Criando a tabela de Veterinários

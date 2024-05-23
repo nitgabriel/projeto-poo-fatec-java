@@ -16,11 +16,16 @@ public class UnidadeDAO implements DAO<Unidade> {
 
     @Override
     public boolean insere(Unidade model) throws SQLException {
-        String sql = "INSERT INTO Unidades (nome, endereco) VALUES (?, ?);";
+        String sql = "INSERT INTO Unidades (nome, cep, rua, bairro, cidade, uf, numero) VALUES (?, ?, ?, ?, ?, ?, ?);";
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setString(1, model.getNome());
-        pst.setString(2, model.getEndereco());
+        pst.setInt(2, model.getCep());
+        pst.setString(3, model.getRua());
+        pst.setString(4, model.getBairro());
+        pst.setString(5, model.getCidade());
+        pst.setString(6, model.getUf());
+        pst.setString(7, model.getNumero());
         boolean result = pst.executeUpdate() >= 1;
         Banco.desconectar();
         return result;
@@ -39,12 +44,17 @@ public class UnidadeDAO implements DAO<Unidade> {
 
     @Override
     public boolean altera(Unidade model) throws SQLException {
-        String sql = "UPDATE Unidades SET nome = ?, endereco = ? WHERE idUnidade = ?;";
+        String sql = "UPDATE Unidades SET nome = ?, cep = ?, rua = ?, bairro = ?, cidade = ?, uf = ?, numero = ? WHERE idUnidade = ?;";
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setString(1, model.getNome());
-        pst.setString(2, model.getEndereco());
-        pst.setInt(3, model.getIdUnidade());
+        pst.setInt(2, model.getCep());
+        pst.setString(3, model.getRua());
+        pst.setString(4, model.getBairro());
+        pst.setString(5, model.getCidade());
+        pst.setString(6, model.getUf());
+        pst.setString(7, model.getNumero());
+        pst.setInt(8, model.getIdUnidade());
         boolean result = pst.executeUpdate() >= 1;
         Banco.desconectar();
         return result;
@@ -58,7 +68,15 @@ public class UnidadeDAO implements DAO<Unidade> {
         pst.setInt(1, model.getIdUnidade());
         rs = pst.executeQuery();
         if (rs.next()) {
-            unidade = new Unidade(rs.getInt("idUnidade"), rs.getString("nome"), rs.getString("endereco"));
+            unidade = new Unidade(
+                    rs.getInt("idUnidade"), 
+                    rs.getString("nome"), 
+                    rs.getInt("cep"),
+                    rs.getString("rua"),
+                    rs.getString("bairro"),
+                    rs.getString("cidade"),
+                    rs.getString("uf"),
+                    rs.getString("numero"));
         }
         Banco.desconectar();
         return unidade;
@@ -75,7 +93,15 @@ public class UnidadeDAO implements DAO<Unidade> {
         pst = Banco.getConexao().prepareStatement(sql);
         rs = pst.executeQuery();
         while (rs.next()) {
-            unidade = new Unidade(rs.getInt("idUnidade"), rs.getString("nome"), rs.getString("endereco"));
+            unidade = new Unidade(
+                    rs.getInt("idUnidade"), 
+                    rs.getString("nome"), 
+                    rs.getInt("cep"),
+                    rs.getString("rua"),
+                    rs.getString("bairro"),
+                    rs.getString("cidade"),
+                    rs.getString("uf"),
+                    rs.getString("numero"));
             listagem.add(unidade);
         }
         Banco.desconectar();
