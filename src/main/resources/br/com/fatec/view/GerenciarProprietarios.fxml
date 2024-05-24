@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="gerenciarProprietarios" fx:id="gerenciarProprietarios" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.GerenciarProprietariosController">
+    <stylesheets>
+        <URL value="@../styles/gerenciarproprietarios.css" />
+    </stylesheets>
+   <children>
+      <Pane id="gerenciaProprietariosTop" prefHeight="117.0" prefWidth="930.0" stylesheets="@../styles/gerenciarproprietarios.css" />  
+      <Label layoutX="122.0" layoutY="168.0" text="NOME">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtNomeProprietario" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="234.0" text="CPF">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtCpfProprietario" layoutX="122.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="300.0" text="CONTATO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtContatoProprietario" layoutX="122.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="419.0" layoutY="168.0" text="E-MAIL">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtEmailProprietario" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="419.0" layoutY="234.0" text="FORMA DE PAGAMENTO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtPagamentoProprietario" layoutX="419.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+        
+      <Button fx:id="btnRegistrarProprietario" layoutX="683.0" layoutY="147.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarProprietario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesDonos" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnAlterarProprietario" layoutX="683.0" layoutY="207.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarProprietario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesDonos" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnExcluirProprietario" layoutX="683.0" layoutY="267.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirProprietario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesDonos" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnConsultarProprietario" layoutX="683.0" layoutY="327.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarProprietario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesDonos" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+   </children>
+</AnchorPane>

@@ -1,0 +1,20 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+#gerenciaAgendamentos {
+    -fx-background-image: url(../images/gerencia-agendamentos.png);
+    -fx-background-repeat: no-repeat; /* Opcional: não repetir a imagem */
+    -fx-background-size: stretch;       
+}
+
+.botoesAgend{
+    -fx-background-color: #ff842c;
+    -fx-max-width: 150px;
+    -fx-pref-width: 150px;
+    -fx-min-width: 150px;
+}

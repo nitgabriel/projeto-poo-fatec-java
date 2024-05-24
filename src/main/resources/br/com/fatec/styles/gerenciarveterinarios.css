@@ -6,12 +6,12 @@
 
 }
 
-#gerenciaPetsTop {
-    -fx-background-image: url(../images/top-gerencia-pets.png);
+#gerenciaVeterinariosTop {
+    -fx-background-image: url(../images/top-gerencia-veterinarios.png);
     -fx-background-repeat: no-repeat; /* Opcional: não repetir a imagem */
     -fx-background-size: cover;       /* Opcional: cobrir toda a área */
 }
 
-.botoesPets{
+.botoesVets{
     -fx-background-color: #ff842c;
 }

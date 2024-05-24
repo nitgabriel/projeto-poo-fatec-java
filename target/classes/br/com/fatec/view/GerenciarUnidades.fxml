@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="br.com.fatec.controller.GerenciarUnidadesController">
+    <stylesheets>
+        <URL value="@../styles/gerenciarunidades.css" />
+    </stylesheets>
+    
+    <children>
+      <Pane id="gerenciaUnidadesTop" prefHeight="117.0" prefWidth="930.0" stylesheets="@../styles/gerenciarunidades.css" />
+      <Button fx:id="btnRegistrarUnidade" layoutX="683.0" layoutY="175.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarUnidade_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesUnidade" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnAlterarUnidade" layoutX="683.0" layoutY="235.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarUnidade_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesUnidade" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnExcluirUnidade" layoutX="683.0" layoutY="295.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirUnidade_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesUnidade" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnConsultarUnidade" layoutX="683.0" layoutY="355.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarUnidade_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesUnidade" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+    </children>
+</AnchorPane>

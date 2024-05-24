@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="gerenciaAgendamentos" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="br.com.fatec.controller.GerenciarAgendamentosController">
+    <stylesheets>
+        <URL value="@../styles/gerenciaragendamentos.css" />
+    </stylesheets>
+    <children>
+      <Button fx:id="btnRegistrarAgendamento" layoutX="52.0" layoutY="415.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarAgendamento_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesAgend" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnAlterarAgendamento" layoutX="232.0" layoutY="415.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarAgendamento_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesAgend" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnExcluirAgendamento" layoutX="412.0" layoutY="415.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirAgendamento_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesAgend" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnConsultarAgendamento" layoutX="600.0" layoutY="415.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarAgendamento_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesAgend" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Label layoutX="91.0" layoutY="168.0" text="DONO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbDonos" layoutX="91.0" layoutY="193.0" prefWidth="150.0" />
+      <Label layoutX="91.0" layoutY="234.0" text="ESPECIALIDADE">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtEspecialidade" layoutX="92.0" layoutY="259.0" />
+      <ComboBox fx:id="cbPets" layoutX="282.0" layoutY="193.0" prefWidth="150.0" />
+      <Label layoutX="282.0" layoutY="168.0" text="PET">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <DatePicker fx:id="dpDataAgend" layoutX="282.0" layoutY="259.0" prefHeight="25.0" prefWidth="150.0" />
+      <Label layoutX="282.0" layoutY="234.0" text="DATA">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="469.0" layoutY="168.0" text="UNIDADE">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbUnidade" layoutX="469.0" layoutY="193.0" prefWidth="150.0" />
+      <ComboBox fx:id="cbHorarios" layoutX="469.0" layoutY="259.0" prefWidth="150.0" />
+      <Label layoutX="469.0" layoutY="234.0" text="HORÁRIOS">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="282.0" layoutY="300.0" text="MEDICAMENTOS">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbMedicamentos" layoutX="282.0" layoutY="325.0" prefWidth="150.0" />
+    </children>
+</AnchorPane>

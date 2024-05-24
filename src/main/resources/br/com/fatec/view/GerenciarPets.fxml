@@ -8,9 +8,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="gerenciarPets" fx:id="gerenciarPets" focusTraversable="true" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" stylesheets="@../styles/menu.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.GerenciarPetsController">
+<AnchorPane id="gerenciarPets" fx:id="gerenciarPets" focusTraversable="true" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0"  xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.GerenciarPetsController">
     <stylesheets>
-        <URL value="@/br/com/fatec/styles/gerenciarpets.css" />
+        <URL value="@../styles/gerenciarpets.css" />
     </stylesheets>
    <children>
       <Pane id="gerenciaPetsTop" layoutX="-2.0" prefHeight="117.0" prefWidth="932.0" stylesheets="@../styles/gerenciarpets.css" />
@@ -21,7 +21,7 @@
       </Label>
       <TextField fx:id="txtNomePet" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
       <TextField fx:id="txtEspeciePet" layoutX="122.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="122.0" layoutY="234.0" text="ESPÈCIE">
+      <Label layoutX="122.0" layoutY="234.0" text="ESPÉCIE">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
@@ -37,7 +37,7 @@
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="419.0" layoutY="234.0" text="NUMERO CONVENIADO">
+      <Label layoutX="419.0" layoutY="234.0" text="NÚMERO CONVENIADO">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
@@ -50,19 +50,19 @@
       </Label>
       <ComboBox fx:id="cbDonos" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="202.0" />
       <DatePicker fx:id="datePickerNascimento" layoutX="419.0" layoutY="325.0" prefHeight="25.0" prefWidth="202.0" />
-      <Button fx:id="btnRegistrarPet" layoutX="688.0" layoutY="159.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="btnRegistrarPet" layoutX="688.0" layoutY="159.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesPets" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
-      <Button fx:id="btnAlterarPet" layoutX="688.0" layoutY="219.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="btnAlterarPet" layoutX="688.0" layoutY="219.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesPets" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
-      <Button fx:id="btnExcluirPet" layoutX="688.0" layoutY="279.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="btnExcluirPet" layoutX="688.0" layoutY="279.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesPets" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
-      <Button fx:id="btnConsultarPet" layoutX="688.0" layoutY="339.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMain" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
+      <Button fx:id="btnConsultarPet" layoutX="688.0" layoutY="339.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarPet_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesPets" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
