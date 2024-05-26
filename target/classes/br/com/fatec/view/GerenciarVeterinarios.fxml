@@ -8,12 +8,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="gerenciarVeterinarios" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="br.com.fatec.controller.GerenciarVeterinariosController">
+<AnchorPane id="gerenciarVeterinarios" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.GerenciarVeterinariosController">
     <stylesheets>
         <URL value="@../styles/gerenciarveterinarios.css" />
     </stylesheets>
     <children>
-      <Pane id="gerenciaVeterinariosTop" prefHeight="117.0" prefWidth="930.0" stylesheets="@../styles/gerenciarveterinarios.css" />  
+      <Pane id="gerenciaVeterinariosTop" prefHeight="117.0" prefWidth="930.0" stylesheets="@../styles/gerenciarveterinarios.css">
+         <children>
+            <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+         </children></Pane>  
       <Label layoutX="122.0" layoutY="168.0" text="NOME">
          <font>
             <Font name="Arial Bold" size="14.0" />

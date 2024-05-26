@@ -6,7 +6,10 @@ package br.com.fatec.controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 
 /**
  * FXML Controller class
@@ -15,6 +18,15 @@ import javafx.fxml.Initializable;
  */
 public class GerenciarUnidadesController implements Initializable {
 
+    @FXML
+    private Button btnRegistrarUnidade;
+    @FXML
+    private Button btnAlterarUnidade;
+    @FXML
+    private Button btnExcluirUnidade;
+    @FXML
+    private Button btnConsultarUnidade;
+
     /**
      * Initializes the controller class.
      */
@@ -22,5 +34,21 @@ public class GerenciarUnidadesController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    @FXML
+    private void btnRegistrarUnidade_Click(ActionEvent event) {
+    }
+
+    @FXML
+    private void btnAlterarUnidade_Click(ActionEvent event) {
+    }
+
+    @FXML
+    private void btnExcluirUnidade_Click(ActionEvent event) {
+    }
+
+    @FXML
+    private void btnConsultarUnidade_Click(ActionEvent event) {
+    }
     
 }

@@ -1,0 +1,13 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+
+}
+
+#consultaInformacoesTop {
+    -fx-background-image: url(../images/top-consulta-informacoes.png);
+    -fx-background-repeat: no-repeat; /* Opcional: não repetir a imagem */
+    -fx-background-size: cover;       /* Opcional: cobrir toda a área */
+}

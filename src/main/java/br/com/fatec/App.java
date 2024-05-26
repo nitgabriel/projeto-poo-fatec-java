@@ -18,7 +18,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("view/GerenciarAgendamentos"), 930, 505);
+        scene = new Scene(loadFXML("view/Menu"), 930, 505);
         stage.setScene(scene);
         stage.getIcons().add(new Image("/br/com/fatec/images/corgi.png"));
         stage.setTitle("ULTRAPETS");
@@ -26,7 +26,7 @@ public class App extends Application {
         stage.show();
     }
 
-    static void setRoot(String fxml) throws IOException {
+    public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }
 

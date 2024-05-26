@@ -4,6 +4,8 @@
  */
 package br.com.fatec.controller;
 
+import br.com.fatec.App;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -11,7 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
 /**
  * FXML Controller class
@@ -38,6 +42,8 @@ public class GerenciarVeterinariosController implements Initializable {
     private TextField txtCrmv;
     @FXML
     private TextField txtStatus;
+    @FXML
+    private Label lblMenu;
 
     /**
      * Initializes the controller class.
@@ -61,6 +67,15 @@ public class GerenciarVeterinariosController implements Initializable {
 
     @FXML
     private void btnConsultarVeterinario_Click(ActionEvent event) {
+    }
+
+    @FXML
+    private void lblMenu_Click(MouseEvent event) {
+        try {
+            App.setRoot("view/Menu");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }

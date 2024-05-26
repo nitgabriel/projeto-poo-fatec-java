@@ -61,5 +61,6 @@
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
+      <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
    </children>
 </AnchorPane>

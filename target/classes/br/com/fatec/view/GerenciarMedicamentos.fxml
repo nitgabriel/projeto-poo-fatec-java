@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="gerenciarMedicamentos" fx:id="gerenciarMedicamentos" focusTraversable="true" maxHeight="505.0" maxWidth="930.0" minHeight="505.0" minWidth="930.0" prefHeight="505.0" prefWidth="930.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.fatec.controller.GerenciarMedicamentosController">
+    <stylesheets>
+        <URL value="@../styles/gerenciarmedicamentos.css" />
+    </stylesheets>
+   <children>
+      <Pane id="gerenciaMedicamentosTop" layoutX="-2.0" prefHeight="117.0" prefWidth="932.0" stylesheets="@../styles/gerenciarmedicamentos.css" />
+      <Label layoutX="122.0" layoutY="168.0" text="NOME MEDICAMENTO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtNomeMedicamento" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtDosagem" layoutX="122.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="234.0" text="DOSAGEM">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtPreco" layoutX="122.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="300.0" text="PREÇO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="419.0" layoutY="168.0" text="DATA DE VALIDADE">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="419.0" layoutY="234.0" text="DESCRIÇÃO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtDescricao" layoutX="419.0" layoutY="259.0" prefHeight="91.0" prefWidth="202.0" />
+      <DatePicker fx:id="datePickerValidade" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="202.0" />
+      <Button fx:id="btnRegistrarMedicamentos" layoutX="688.0" layoutY="159.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarMedicamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMeds" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnAlterarMedicamentos" layoutX="688.0" layoutY="219.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnAlterarMedicamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMeds" text="ALTERAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnExcluirMedicamentos" layoutX="688.0" layoutY="279.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnExcluirMedicamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMeds" text="EXCLUIR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Button fx:id="btnConsultarMedicamentos" layoutX="688.0" layoutY="339.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnConsultarMedicamentos_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesMeds" text="CONSULTAR" textAlignment="JUSTIFY" textFill="WHITE">
+         <font>
+            <Font name="Arial Bold" size="12.0" />
+         </font></Button>
+      <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+   </children>
+</AnchorPane>
