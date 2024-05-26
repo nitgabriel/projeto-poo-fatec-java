@@ -67,12 +67,18 @@
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtUF" layoutX="419.0" layoutY="325.0" prefHeight="25.0" prefWidth="37.0" />
-      <TextField fx:id="txtNumero" layoutX="487.0" layoutY="325.0" prefHeight="25.0" prefWidth="63.0" />
-      <Label layoutX="487.0" layoutY="300.0" text="NÚMERO">
+      <ComboBox fx:id="cbUF" layoutX="419.0" layoutY="325.0" prefHeight="25.0" prefWidth="71.0" />
+      <TextField fx:id="txtNumero" layoutX="514.0" layoutY="325.0" prefHeight="25.0" prefWidth="63.0" />
+      <Label layoutX="514.0" layoutY="300.0" text="NÚMERO">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
+      <Label layoutX="122.0" layoutY="367.0" text="NOME">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txtNome" layoutX="122.0" layoutY="392.0" prefHeight="25.0" prefWidth="181.0" />
     </children>
 </AnchorPane>

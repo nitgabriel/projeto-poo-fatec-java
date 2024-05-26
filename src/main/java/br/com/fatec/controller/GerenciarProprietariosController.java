@@ -62,9 +62,9 @@ public class GerenciarProprietariosController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         UnaryOperator<TextFormatter.Change> filter = change -> {
-            String text = change.getText();
+            String text = change.getControlNewText();
 
-            if (text.matches("\\d*")) { // this is the important line
+            if (text.matches("\\d*") && text.length() <= 11) { // this is the important line
                 return change;
             }
 
@@ -90,6 +90,7 @@ public class GerenciarProprietariosController implements Initializable {
             dono.setFormaPagamento(txtPagamentoProprietario.getText());
             if(donoDAO.insere(dono)) {
                 showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS INSERIDOS COM SUCESSO.");
+                fields.forEach(field -> field.clear());
             } else {
                 showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO INSERIR DADOS.");
             }
@@ -113,6 +114,7 @@ public class GerenciarProprietariosController implements Initializable {
 
                 if(donoDAO.altera(dono)) {
                     showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS ALTERADOS COM SUCESSO.");
+                    fields.forEach(field -> field.clear());
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL ALTERAR OS DADOS.");
                 }
@@ -134,6 +136,7 @@ public class GerenciarProprietariosController implements Initializable {
             if (dono != null)  {
                 if(donoDAO.remove(dono)) {
                     showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS REMOVIDOS COM SUCESSO.");
+                    fields.forEach(field -> field.clear());
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL EXCLUIR OS DADOS.");
                 }

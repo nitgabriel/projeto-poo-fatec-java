@@ -5,6 +5,7 @@ import br.com.fatec.persistencia.Banco;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -106,5 +107,23 @@ public class UnidadeDAO implements DAO<Unidade> {
         }
         Banco.desconectar();
         return listagem;
+    }
+
+    //MÉTODO APENAS PARA SETAR O PRÓXIMO ID A SER CADASTRADO NA TABELA.
+    //ASSIM O USUÁRIO SABE QUAL SERÁ O PRÓXIMO ID, E OS ANTERIORES SERVEM
+    //PARA CONSULTA, ALTERAÇÃO E DELETAR.
+    public int getNextId() throws SQLException {
+        String sql = "SELECT COALESCE(MAX(idUnidade), 0) + 1 AS nextId FROM Unidades";
+        // COALESCE PARA TRATAR O CASO DE POSSÍVEL RETORNO DE 0 PELA SOMA DE NULL + 1 = 0/NULL
+
+        Banco.conectar();
+        Statement stmt  = Banco.getConexao().createStatement();
+        ResultSet rs    = stmt.executeQuery(sql);
+
+        if (rs.next()) {
+            return rs.getInt("nextId");
+        } else {
+            return 1;  // Se a tabela estiver vazia, retorna 1
+        }
     }
 }

@@ -17,8 +17,7 @@ public class Banco {
     private static Connection conexao = null;
     
     public static void conectar() 
-            throws 
-                   SQLException {
+            throws SQLException {
         String url="jdbc:mysql://" + servidor +
                    ":" + porta +
                    "/" + bd;
