@@ -25,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 /**
  * FXML Controller class
@@ -142,16 +143,7 @@ public class GerenciarAgendamentosController implements Initializable {
             List<Medicamento> medicamentos = GerenciarMedicamentosController.getMedicamentoList();
             cbMedicamentos.setItems(FXCollections.observableArrayList(medicamentos));
 
-            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-            try {
-                Collection<Agendamento> agendamentos = agendamentoDAO.lista("");
-                List<Agendamento> agendamentosList = new ArrayList<>();
-                agendamentosList.add(null); // Adiciona um item "null" à lista
-                agendamentosList.addAll(agendamentos); // Adiciona todos os agendamentos após o "null"
-                cbAgendamentos.setItems(FXCollections.observableArrayList(agendamentosList));
-            } catch (SQLException e) {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO LOCALIZAR OS AGENDAMENTOS.");
-            }
+            atualizarAgendamentos();
 
             cbAgendamentos.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
                 if (newValue != null) {
@@ -180,6 +172,28 @@ public class GerenciarAgendamentosController implements Initializable {
         } catch (SQLException e) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO LOCALIZAR OS DADOS.");
         }
+
+        final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
+            public DateCell call(final DatePicker datePicker) {
+                return new DateCell() {
+                    @Override
+                    public void updateItem(LocalDate item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+                        try {
+                            Collection<Agendamento> agendamentos = agendamentoDAO.lista("data = '" + item + "'");
+                            if (agendamentos.size() == 7) { // Se todos os 7 horários do dia estiverem agendados
+                                setStyle("-fx-background-color: #ff4444;");
+                            }
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+            }
+        };
+        dpDataAgend.setDayCellFactory(dayCellFactory);
     }
 
     @FXML
@@ -208,6 +222,7 @@ public class GerenciarAgendamentosController implements Initializable {
                         } else if (control instanceof DatePicker) {
                             ((DatePicker) control).setValue(null);
                         }
+                        atualizarAgendamentos();
                     });
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR AGENDAMENTO.");
@@ -250,6 +265,7 @@ public class GerenciarAgendamentosController implements Initializable {
                                 } else if (control instanceof DatePicker) {
                                     ((DatePicker) control).setValue(null);
                                 }
+                                atualizarAgendamentos();
                             });
                         } else {
                             showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR AGENDAMENTO.");
@@ -286,6 +302,7 @@ public class GerenciarAgendamentosController implements Initializable {
                             } else if (control instanceof DatePicker) {
                                 ((DatePicker) control).setValue(null);
                             }
+                            atualizarAgendamentos();
                         });
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO EXCLUIR AGENDAMENTO.\n");
@@ -373,5 +390,17 @@ public class GerenciarAgendamentosController implements Initializable {
         }
     }
 
-    
+    private void atualizarAgendamentos() {
+        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+        try {
+            Collection<Agendamento> agendamentos = agendamentoDAO.lista("");
+            List<Agendamento> agendamentosList = new ArrayList<>();
+            agendamentosList.add(null); // Adiciona um item "null" à lista
+            agendamentosList.addAll(agendamentos); // Adiciona todos os agendamentos após o "null"
+            cbAgendamentos.setItems(FXCollections.observableArrayList(agendamentosList));
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO LOCALIZAR OS AGENDAMENTOS.");
+        }
+    }
+
 }
