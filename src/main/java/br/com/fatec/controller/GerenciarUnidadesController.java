@@ -4,12 +4,17 @@
  */
 package br.com.fatec.controller;
 
+import br.com.fatec.App;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
 /**
  * FXML Controller class
@@ -26,6 +31,22 @@ public class GerenciarUnidadesController implements Initializable {
     private Button btnExcluirUnidade;
     @FXML
     private Button btnConsultarUnidade;
+    @FXML
+    private Label lblMenu;
+    @FXML
+    private TextField txtCidade;
+    @FXML
+    private TextField txtUnidade;
+    @FXML
+    private TextField txtCep;
+    @FXML
+    private TextField txtBairro;
+    @FXML
+    private TextField txtRua;
+    @FXML
+    private TextField txtUF;
+    @FXML
+    private TextField txtNumero;
 
     /**
      * Initializes the controller class.
@@ -49,6 +70,15 @@ public class GerenciarUnidadesController implements Initializable {
 
     @FXML
     private void btnConsultarUnidade_Click(ActionEvent event) {
+    }
+
+    @FXML
+    private void lblMenu_Click(MouseEvent event) {
+        try {
+            App.setRoot("view/Menu");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
 }
