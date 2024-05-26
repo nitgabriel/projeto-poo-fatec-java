@@ -6,6 +6,7 @@ C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\mode
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\GerenciarUnidadesController.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\DAO\AgendamentoDAO.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\GerenciarAgendamentosController.java
+C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\exceptions\InvalidDateException.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\DAO\DonoDAO.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\GerenciarVeterinariosController.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\MenuController.java
@@ -15,6 +16,7 @@ C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\cont
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\model\Agendamento.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\GerenciarMedicamentosController.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\App.java
+C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\exceptions\InvalidOwnerException.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\controller\ConsultarInformacoesController.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\DAO\DAO.java
 C:\Users\Gabriel\Documents\JAVA\VA4_N2_ULTRAPETS\src\main\java\br\com\fatec\model\Veterinario.java

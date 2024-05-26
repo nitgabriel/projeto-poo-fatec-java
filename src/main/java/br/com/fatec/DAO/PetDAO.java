@@ -98,4 +98,23 @@ public class PetDAO implements DAO<Pet> {
         Banco.desconectar();
         return listagem;
     }
+
+    public Pet buscaPorNumeroConveniado(String numeroConveniado) throws SQLException {
+        String sql = "SELECT * FROM Pets WHERE numeroConveniado = ?;";
+        Banco.conectar();
+        pst = Banco.getConexao().prepareStatement(sql);
+        pst.setString(1, numeroConveniado);
+        rs = pst.executeQuery();
+        if (rs.next()) {
+            DonoDAO donoDAO = new DonoDAO();
+            Dono dono = new Dono();
+            dono.setIdDono(rs.getInt("idDono"));
+            dono = donoDAO.buscaID(dono);
+            pet = new Pet(rs.getInt("idPet"), rs.getString("nome"), rs.getString("especie"), rs.getString("numeroConveniado"), rs.getString("raca"), rs.getDate("dataNascimento").toLocalDate(), dono);
+        }
+        Banco.desconectar();
+        return pet;
+    }
+
+
 }

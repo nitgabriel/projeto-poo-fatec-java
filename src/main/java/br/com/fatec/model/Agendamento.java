@@ -121,4 +121,11 @@ public class Agendamento {
     public void setHorario(LocalTime horario) {
         this.horario = horario;
     }
+
+    @Override
+    public String toString() {
+        return idAgendamento + " " + data +
+                " " + horario + " " +
+                pet;
+    }
 }

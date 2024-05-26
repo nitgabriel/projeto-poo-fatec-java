@@ -93,4 +93,10 @@ public class Dono {
     public void setContato(String contato) {
         this.contato = contato;
     }
+
+    @Override
+    public String toString() {
+        return "id " + idDono +
+                " " + nome;
+    }
 }

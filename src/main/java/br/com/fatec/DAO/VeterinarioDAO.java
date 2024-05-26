@@ -98,4 +98,22 @@ public class VeterinarioDAO implements DAO<Veterinario> {
         Banco.desconectar();
         return listagem;
     }
+
+    public Veterinario buscaPorCrmv(String crmv) throws SQLException {
+        String sql = "SELECT * FROM Veterinarios WHERE crmv = ?;";
+        Banco.conectar();
+        pst = Banco.getConexao().prepareStatement(sql);
+        pst.setString(1, crmv);
+        rs = pst.executeQuery();
+        Veterinario veterinario = null;
+        if (rs.next()) {
+            UnidadeDAO unidadeDAO = new UnidadeDAO();
+            Unidade unidade = new Unidade();
+            unidade.setIdUnidade(rs.getInt("idUnidade"));
+            unidade = unidadeDAO.buscaID(unidade);
+            veterinario = new Veterinario(rs.getInt("idVeterinario"), rs.getString("nome"), rs.getString("crmv"), unidade, rs.getString("status"), rs.getString("especialidade"));
+        }
+        Banco.desconectar();
+        return veterinario;
+    }
 }

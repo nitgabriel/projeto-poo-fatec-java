@@ -9,6 +9,8 @@ import br.com.fatec.persistencia.Banco;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -138,5 +140,42 @@ public class AgendamentoDAO implements DAO<Agendamento> {
         }
         Banco.desconectar();
         return listagem;
+    }
+
+    public Agendamento buscaPorDataHorario(LocalDate data, LocalTime horario) throws SQLException {
+        String sql = "SELECT * FROM Agendamentos WHERE data = ? AND horario = ?;";
+        Banco.conectar();
+        pst = Banco.getConexao().prepareStatement(sql);
+        pst.setDate(1, java.sql.Date.valueOf(data));
+        pst.setTime(2, java.sql.Time.valueOf(horario));
+        rs = pst.executeQuery();
+        Agendamento agendamento = null;
+        if (rs.next()) {
+            // Criando o objeto de DAO e dos models para popular os objetos pelo ID cadastrado no banco de dados.
+            DonoDAO donoDAO = new DonoDAO();
+            Dono dono = new Dono();
+            dono.setIdDono(rs.getInt("idDono"));
+            dono = donoDAO.buscaID(dono);
+
+            PetDAO petDAO = new PetDAO();
+            Pet pet = new Pet(dono);
+            pet.setId(rs.getInt("idPet"));
+            pet = petDAO.buscaID(pet);
+
+
+            UnidadeDAO unidadeDAO = new UnidadeDAO();
+            Unidade unidade = new Unidade();
+            unidade.setIdUnidade(rs.getInt("idUnidade"));
+            unidade = unidadeDAO.buscaID(unidade);
+
+            VeterinarioDAO veterinarioDAO = new VeterinarioDAO();
+            Veterinario veterinario = new Veterinario(unidade);
+            veterinario.setIdVeterinario(rs.getInt("idVeterinario"));
+            veterinario = veterinarioDAO.buscaID(veterinario);
+
+            agendamento = new Agendamento(rs.getInt("idAgendamento"), dono, pet, veterinario, unidade, rs.getString("especialidade"), rs.getDate("data").toLocalDate(), rs.getTime("horario").toLocalTime());
+        }
+        Banco.desconectar();
+        return agendamento;
     }
 }

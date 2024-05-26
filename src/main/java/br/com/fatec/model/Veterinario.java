@@ -94,4 +94,11 @@ public class Veterinario {
     public void setEspecialidade(String especialidade) {
         this.especialidade = especialidade;
     }
+
+    @Override
+    public String toString() {
+        return idVeterinario +
+                " - " + nome +
+                " crmv=" + crmv;
+    }
 }

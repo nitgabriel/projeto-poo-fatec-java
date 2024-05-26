@@ -29,38 +29,38 @@
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
-      <Label layoutX="91.0" layoutY="168.0" text="DONO">
+      <Label layoutX="282.0" layoutY="168.0" text="DONO">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <ComboBox fx:id="cbDonos" layoutX="91.0" layoutY="193.0" prefWidth="150.0" />
-      <Label layoutX="91.0" layoutY="234.0" text="ESPECIALIDADE">
+      <ComboBox fx:id="cbDonos" layoutX="282.0" layoutY="193.0" prefWidth="150.0" />
+      <Label layoutX="282.0" layoutY="234.0" text="ESPECIALIDADE">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtEspecialidade" layoutX="92.0" layoutY="259.0" />
-      <ComboBox fx:id="cbPets" layoutX="282.0" layoutY="193.0" prefWidth="150.0" />
-      <Label layoutX="282.0" layoutY="168.0" text="PET">
+      <TextField fx:id="txtEspecialidade" layoutX="282.0" layoutY="259.0" />
+      <ComboBox fx:id="cbPets" layoutX="469.0" layoutY="193.0" prefWidth="150.0" />
+      <Label layoutX="469.0" layoutY="168.0" text="PET">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <DatePicker fx:id="dpDataAgend" layoutX="282.0" layoutY="259.0" prefHeight="25.0" prefWidth="150.0" />
-      <Label layoutX="282.0" layoutY="234.0" text="DATA">
+      <DatePicker fx:id="dpDataAgend" layoutX="469.0" layoutY="259.0" prefHeight="25.0" prefWidth="150.0" />
+      <Label layoutX="469.0" layoutY="234.0" text="DATA">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <Label layoutX="469.0" layoutY="168.0" text="UNIDADE">
+      <Label layoutX="91.0" layoutY="234.0" text="UNIDADE">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <ComboBox fx:id="cbUnidade" layoutX="469.0" layoutY="193.0" prefWidth="150.0" />
-      <ComboBox fx:id="cbHorarios" layoutX="469.0" layoutY="259.0" prefWidth="150.0" />
-      <Label layoutX="469.0" layoutY="234.0" text="HORÁRIOS">
+      <ComboBox fx:id="cbUnidade" layoutX="91.0" layoutY="259.0" prefWidth="150.0" />
+      <ComboBox fx:id="cbHorarios" layoutX="469.0" layoutY="325.0" prefWidth="150.0" />
+      <Label layoutX="469.0" layoutY="300.0" text="HORÁRIOS">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
@@ -72,5 +72,17 @@
       </Label>
       <ComboBox fx:id="cbMedicamentos" layoutX="282.0" layoutY="325.0" prefWidth="150.0" />
       <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+      <ComboBox fx:id="cbVeterinarios" layoutX="91.0" layoutY="325.0" prefWidth="150.0" />
+      <Label layoutX="91.0" layoutY="300.0" text="VETERINÁRIO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbAgendamentos" layoutX="91.0" layoutY="193.0" prefWidth="150.0" promptText="Apenas existentes" />
+      <Label layoutX="91.0" layoutY="168.0" text="AGENDAMENTO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>
