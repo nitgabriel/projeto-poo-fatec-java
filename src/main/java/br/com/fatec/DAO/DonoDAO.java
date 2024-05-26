@@ -87,4 +87,17 @@ public class DonoDAO implements DAO<Dono> {
         Banco.desconectar();
         return listagem;
     }
+
+    public Dono buscaCPF (Dono model) throws SQLException {
+        String sql = "SELECT * FROM Donos WHERE cpf = ?;";
+        Banco.conectar();
+        pst = Banco.getConexao().prepareStatement(sql);
+        pst.setString(1, model.getCpf());
+        rs = pst.executeQuery();
+        if (rs.next()) {
+            dono = new Dono(rs.getInt("idDono"), rs.getString("nome"), rs.getString("email"), rs.getString("cpf"), rs.getString("formaPagamento"), rs.getString("contato"));
+        }
+        Banco.desconectar();
+        return dono;
+    }
 }
