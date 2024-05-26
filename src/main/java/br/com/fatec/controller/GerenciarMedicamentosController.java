@@ -53,6 +53,12 @@ public class GerenciarMedicamentosController implements Initializable {
 
     private static List<Medicamento> medicamentoList = new ArrayList<>();
 
+    static {
+        medicamentoList.add(new Medicamento("Benazepril", "2,5mg/kg", 10.0, LocalDate.now().plusMonths(1), "Indicado para Hipertensão e outros."));
+        medicamentoList.add(new Medicamento("Pimobendana", "0,3mg/kg", 20.0, LocalDate.now().plusMonths(1), "É indicado para o tratamento dos sinais leves, moderados ou severos de ICC em cães."));
+        medicamentoList.add(new Medicamento("Furosemida", "2mg/kg", 30.0, LocalDate.now().plusMonths(1), "Sua principal ação é no segmento ascendente da alça de Henle"));
+    }
+
     private List<TextField> fields;
 
     /**
@@ -62,13 +68,7 @@ public class GerenciarMedicamentosController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         fields = Arrays.asList(txtNomeMedicamento, txtDosagem, txtPreco, txtDescricao);
-        Medicamento benazepril = new Medicamento("Benazepril", "2,5mg/kg", 10.0, LocalDate.now().plusMonths(1), "Indicado para Hipertensão e outros.");
-        Medicamento pimobendana = new Medicamento("Pimobendana", "0,3mg/kg", 20.0, LocalDate.now().plusMonths(1), "É indicado para o tratamento dos sinais leves, moderados ou severos de ICC em cães.");
-        Medicamento furosemida = new Medicamento("Furosemida", "2mg/kg", 30.0, LocalDate.now().plusMonths(1), "Sua principal ação é no segmento ascendente da alça de Henle");
 
-        medicamentoList.add(benazepril);
-        medicamentoList.add(pimobendana);
-        medicamentoList.add(furosemida);
     }
 
     @FXML
