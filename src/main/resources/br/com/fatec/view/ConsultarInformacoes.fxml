@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
@@ -11,18 +12,90 @@
     <stylesheets>
         <URL value="@../styles/consultarinformacoes.css" />
     </stylesheets>
-   <children>
-      <Pane id="consultaInformacoesTop" layoutX="-2.0" prefHeight="117.0" prefWidth="932.0" stylesheets="@../styles/consultarinformacoes.css" />
-      <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
-      <TableView fx:id="tbViewConsulta" layoutX="77.0" layoutY="175.0" prefHeight="289.0" prefWidth="776.0">
-        <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
-        </columns>
-      </TableView>
-      <ComboBox fx:id="cbFiltros" layoutX="77.0" layoutY="139.0" prefHeight="25.0" prefWidth="95.0" promptText="FILTROS" />
-      <TextField fx:id="txtFiltros" layoutX="192.0" layoutY="139.0" prefHeight="25.0" prefWidth="467.0" promptText="Digite algo para ser filtrado..." />
-      <Button fx:id="btnFiltrar" layoutX="679.0" layoutY="139.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="61.0" text="FILTRAR" />
-      <Button fx:id="btnRestaurar" layoutX="752.0" layoutY="139.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="RESTAURAR" />
-   </children>
+    <children>
+        <Pane id="consultaInformacoesTop" layoutX="-2.0" prefHeight="117.0" prefWidth="932.0" stylesheets="@../styles/consultarinformacoes.css" />
+        <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+        <TabPane fx:id="tabPane" layoutX="77.0" layoutY="175.0" prefHeight="289.0" prefWidth="776.0">
+            <tabs>
+                <Tab closable="false" text="Agendamentos">
+                    <content>
+                        <TableView fx:id="tbViewAgendamento">
+                     <columns>
+                        <TableColumn fx:id="colIdAgendamento" prefWidth="102.0" text="ID Agendamento" />
+                        <TableColumn fx:id="colIdDono" prefWidth="63.0" text="ID Dono" />
+                        <TableColumn fx:id="colIdPet" prefWidth="60.0" text="ID Pet" />
+                        <TableColumn fx:id="colIdVeterinario" prefWidth="87.0" text="ID Veterinario" />
+                        <TableColumn fx:id="colIdUnidade" prefWidth="76.0" text="ID Unidade" />
+                        <TableColumn fx:id="colEspecialidade" text="Especialidade" />
+                        <TableColumn fx:id="colData" prefWidth="89.0" text="Data" />
+                        <TableColumn fx:id="colHorario" prefWidth="71.0" text="Horario" />
+                     </columns></TableView>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Donos">
+                    <content>
+                        <TableView fx:id="tbViewDonos">
+                            <columns>
+                                <TableColumn fx:id="colIdDonos" text="ID Dono" />
+                                <TableColumn fx:id="colNomeDono" text="Nome" />
+                                <TableColumn fx:id="colEmailDono" text="Email" />
+                                <TableColumn fx:id="colCpfDono" text="CPF" />
+                                <TableColumn fx:id="colFormaPagamentoDono" text="Forma de Pagamento" />
+                                <TableColumn fx:id="colContatoDono" text="Contato" />
+                            </columns>
+                        </TableView>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Pets">
+                    <content>
+                        <TableView fx:id="tbViewPets">
+                            <columns>
+                                <TableColumn fx:id="colIdPets" text="ID Pet" />
+                                <TableColumn fx:id="colNomePet" text="Nome" />
+                                <TableColumn fx:id="colEspeciePet" text="Espécie" />
+                                <TableColumn fx:id="colIdDonoPet" text="ID Dono" />
+                                <TableColumn fx:id="colNumeroConveniadoPet" text="Número Conveniado" />
+                                <TableColumn fx:id="colRacaPet" text="Raça" />
+                                <TableColumn fx:id="colDataNascimentoPet" text="Data de Nascimento" />
+                            </columns>
+                        </TableView>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Unidades">
+                    <content>
+                        <TableView fx:id="tbViewUnidades">
+                            <columns>
+                                <TableColumn fx:id="colIdUnidades" text="ID Unidade" />
+                                <TableColumn fx:id="colNomeUnidade" text="Nome" />
+                                <TableColumn fx:id="colCepUnidade" text="CEP" />
+                                <TableColumn fx:id="colRuaUnidade" text="Rua" />
+                                <TableColumn fx:id="colBairroUnidade" text="Bairro" />
+                                <TableColumn fx:id="colCidadeUnidade" text="Cidade" />
+                                <TableColumn fx:id="colUfUnidade" text="UF" />
+                                <TableColumn fx:id="colNumeroUnidade" text="Número" />
+                            </columns>
+                        </TableView>
+                    </content>
+                </Tab>
+                <Tab closable="false" text="Veterinários">
+                    <content>
+                        <TableView fx:id="tbViewVeterinarios">
+                            <columns>
+                                <TableColumn fx:id="colIdVeterinarios" text="ID Veterinário" />
+                                <TableColumn fx:id="colNomeVeterinario" text="Nome" />
+                                <TableColumn fx:id="colCrmvVeterinario" text="CRMV" />
+                                <TableColumn fx:id="colIdUnidadeVeterinario" text="ID Unidade" />
+                                <TableColumn fx:id="colStatusVeterinario" text="Status" />
+                                <TableColumn fx:id="colEspecialidadeVeterinario" text="Especialidade" />
+                            </columns>
+                        </TableView>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <ComboBox fx:id="cbFiltros" layoutX="77.0" layoutY="139.0" prefHeight="25.0" prefWidth="95.0" promptText="FILTROS" />
+        <TextField fx:id="txtFiltros" layoutX="192.0" layoutY="139.0" prefHeight="25.0" prefWidth="467.0" promptText="Digite algo para ser filtrado..." />
+        <Button fx:id="btnFiltrar" layoutX="679.0" layoutY="139.0" mnemonicParsing="false" onAction="#btnFiltrar_Click" prefHeight="25.0" prefWidth="61.0" text="FILTRAR" />
+        <Button fx:id="btnRestaurar" layoutX="752.0" layoutY="139.0" mnemonicParsing="false" onAction="#btnRestaurar_Click" prefHeight="25.0" prefWidth="101.0" text="RESTAURAR" />
+    </children>
 </AnchorPane>
