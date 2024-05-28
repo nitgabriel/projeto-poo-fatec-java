@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.function.Predicate;
 
 import br.com.fatec.DAO.*;
 import br.com.fatec.model.*;
@@ -19,11 +20,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 /**
  * FXML Controller class
@@ -130,6 +133,16 @@ public class ConsultarInformacoesController implements Initializable {
     private ObservableList<Pet> dadosPets;
     private ObservableList<Unidade> dadosUnidades;
     private ObservableList<Veterinario> dadosVeterinarios;
+
+    // FilteredList para filtrar eficientemente.
+    private FilteredList<Agendamento> filteredAgendamentos;
+    private FilteredList<Dono> filteredDonos;
+    private FilteredList<Pet> filteredPets;
+    private FilteredList<Unidade> filteredUnidades;
+    private FilteredList<Veterinario> filteredVeterinarios;
+
+    // Critérios de filtragem
+    private Map<String, Pair<String, String>> tabFilters = new HashMap<>();
     /**
      * Initializes the controller class.
      */
@@ -137,29 +150,9 @@ public class ConsultarInformacoesController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         cbFiltros.setItems(FXCollections.observableArrayList("ID Agendamento", "ID Dono", "ID Pet", "ID Veterinario", "ID Unidade", "Especialidade", "Data", "Horario"));
 
-        popularTabelaAgendamento();
-        popularTabelaDonos();
-        popularTabelaPets();
-        popularTabelaUnidades();
-        popularTabelaVeterinarios();
+        carregarESetarDadoseFiltros();
+        setarListenerMudancaDeTabela();
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
-            ObservableList<String> items;
-            if (newTab.getText().equals("Agendamentos")) {
-                items = FXCollections.observableArrayList("ID Agendamento", "ID Dono", "ID Pet", "ID Veterinario", "ID Unidade", "Especialidade", "Data", "Horario");
-            } else if (newTab.getText().equals("Donos")) {
-                items = FXCollections.observableArrayList("ID Dono", "Nome", "Email", "CPF", "Forma de Pagamento", "Contato");
-            } else if (newTab.getText().equals("Pets")) {
-                items = FXCollections.observableArrayList("ID Pet", "Nome", "Espécie", "ID Dono", "Número Conveniado", "Raça", "Data de Nascimento");
-            } else if (newTab.getText().equals("Unidades")) {
-                items = FXCollections.observableArrayList("ID Unidade", "Nome", "CEP", "Rua", "Bairro", "Cidade", "UF", "Número");
-            } else if (newTab.getText().equals("Veterinários")) {
-                items = FXCollections.observableArrayList("ID Veterinário", "Nome", "CRMV", "ID Unidade", "Status", "Especialidade");
-            } else {
-                items = FXCollections.observableArrayList();
-            }
-            cbFiltros.setItems(items);
-        });
     }    
 
     @FXML
@@ -179,20 +172,39 @@ public class ConsultarInformacoesController implements Initializable {
         alert.showAndWait();
     }
 
-    private void popularTabelaAgendamento() {
+    // FUNÇÕES PARA POPULAR TABELAS COM OS DADOS DO BANCO DE DADOS
+
+    private void carregarESetarDadoseFiltros() {
         try {
-            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+            // Carregar dados dos DAOs
+            dadosAgendamentos = FXCollections.observableArrayList(new AgendamentoDAO().lista(""));
+            dadosDonos = FXCollections.observableArrayList(new DonoDAO().lista(""));
+            dadosPets = FXCollections.observableArrayList(new PetDAO().lista(""));
+            dadosUnidades = FXCollections.observableArrayList(new UnidadeDAO().lista(""));
+            dadosVeterinarios = FXCollections.observableArrayList(new VeterinarioDAO().lista(""));
 
-            Collection<Agendamento> agendamentos = agendamentoDAO.lista("");
+            filteredAgendamentos = new FilteredList<>(dadosAgendamentos);
+            filteredDonos = new FilteredList<>(dadosDonos);
+            filteredPets = new FilteredList<>(dadosPets);
+            filteredUnidades = new FilteredList<>(dadosUnidades);
+            filteredVeterinarios = new FilteredList<>(dadosVeterinarios);
 
+            // Colocando os tbView com os dados
+            tbViewAgendamento.setItems(filteredAgendamentos);
+            tbViewDonos.setItems(filteredDonos);
+            tbViewPets.setItems(filteredPets);
+            tbViewUnidades.setItems(filteredUnidades);
+            tbViewVeterinarios.setItems(filteredVeterinarios);
 
-            dadosAgendamentos = FXCollections.observableArrayList(agendamentos);
+            setarCellValueFactories();
 
-            tbViewAgendamento.setItems(dadosAgendamentos);
         } catch (SQLException e) {
             showAlert(Alert.AlertType.WARNING, "ERRO DE DADOS", "ERRO AO CONSULTAR DADOS DO BANCO DE DADOS.\n" + e.getMessage());
         }
+    }
 
+    private void setarCellValueFactories() {
+        // Agendamento
         colIdAgendamento.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdAgendamento()).asObject());
         colIdDono.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getDono().getIdDono()).asObject());
         colIdPet.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getPet().getId()).asObject());
@@ -201,42 +213,16 @@ public class ConsultarInformacoesController implements Initializable {
         colEspecialidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEspecialidade()));
         colData.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getData()));
         colHorario.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getHorario()));
-    }
 
-    private void popularTabelaDonos() {
-        try {
-            DonoDAO donoDAO = new DonoDAO();
-
-            Collection<Dono> agendamentos = donoDAO.lista("");
-
-            dadosDonos = FXCollections.observableArrayList(agendamentos);
-
-            tbViewDonos.setItems(dadosDonos);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.WARNING, "ERRO DE DADOS", "ERRO AO CONSULTAR DADOS DO BANCO DE DADOS.\n" + e.getMessage());
-        }
-
+        // Donos
         colIdDonos.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdDono()).asObject());
         colNomeDono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNome()));
         colEmailDono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEmail()));
         colCpfDono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCpf()));
         colFormaPagamentoDono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFormaPagamento()));
         colContatoDono.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getContato()));
-    }
 
-    private void popularTabelaPets() {
-        try {
-            PetDAO petDAO = new PetDAO();
-
-            Collection<Pet> agendamentos = petDAO.lista("");
-
-            dadosPets = FXCollections.observableArrayList(agendamentos);
-
-            tbViewPets.setItems(dadosPets);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.WARNING, "ERRO DE DADOS", "ERRO AO CONSULTAR DADOS DO BANCO DE DADOS.\n" + e.getMessage());
-        }
-
+        // Pets
         colIdPets.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getId()).asObject());
         colNomePet.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNome()));
         colEspeciePet.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEspecie()));
@@ -244,21 +230,8 @@ public class ConsultarInformacoesController implements Initializable {
         colNumeroConveniadoPet.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNumeroConveniado()));
         colRacaPet.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRaca()));
         colDataNascimentoPet.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDataNascimento()));
-    }
 
-    private void popularTabelaUnidades() {
-        try {
-            UnidadeDAO unidadeDAO = new UnidadeDAO();
-
-            Collection<Unidade> agendamentos = unidadeDAO.lista("");
-
-            dadosUnidades = FXCollections.observableArrayList(agendamentos);
-
-            tbViewUnidades.setItems(dadosUnidades);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.WARNING, "ERRO DE DADOS", "ERRO AO CONSULTAR DADOS DO BANCO DE DADOS.\n" + e.getMessage());
-        }
-
+        // Unidades
         colIdUnidades.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdUnidade()).asObject());
         colNomeUnidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNome()));
         colCepUnidade.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getCep()).asObject());
@@ -267,21 +240,8 @@ public class ConsultarInformacoesController implements Initializable {
         colCidadeUnidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCidade()));
         colUfUnidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUf()));
         colNumeroUnidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNumero()));
-    }
 
-    private void popularTabelaVeterinarios() {
-        try {
-            VeterinarioDAO veterinarioDAO = new VeterinarioDAO();
-
-            Collection<Veterinario> agendamentos = veterinarioDAO.lista("");
-
-            dadosVeterinarios = FXCollections.observableArrayList(agendamentos);
-
-            tbViewVeterinarios.setItems(dadosVeterinarios);
-        } catch (SQLException e) {
-            showAlert(Alert.AlertType.WARNING, "ERRO DE DADOS", "ERRO AO CONSULTAR DADOS DO BANCO DE DADOS.\n" + e.getMessage());
-        }
-
+        // Veterinarios
         colIdVeterinarios.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdVeterinario()).asObject());
         colNomeVeterinario.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNome()));
         colCrmvVeterinario.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCrmv()));
@@ -290,150 +250,182 @@ public class ConsultarInformacoesController implements Initializable {
         colEspecialidadeVeterinario.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEspecialidade()));
     }
 
-
     public void btnFiltrar_Click(ActionEvent actionEvent) {
+        String tabName = tabPane.getSelectionModel().getSelectedItem().getText();
         String campo = cbFiltros.getValue();
-        String filtro = txtFiltros.getText();
+        String filtro = txtFiltros.getText().toLowerCase();
 
-        if (tabPane.getSelectionModel().getSelectedItem().getText().equals("Agendamentos")) {
-            ObservableList<Agendamento> dadosFiltrados = filtrarAgendamentos(campo, filtro);
-            tbViewAgendamento.setItems(dadosFiltrados);
-        } else if (tabPane.getSelectionModel().getSelectedItem().getText().equals("Donos")) {
-            ObservableList<Dono> dadosFiltrados = filtrarDonos(campo, filtro);
-            tbViewDonos.setItems(dadosFiltrados);
-        } else if (tabPane.getSelectionModel().getSelectedItem().getText().equals("Pets")) {
-            ObservableList<Pet> dadosFiltrados = filtrarPets(campo, filtro);
-            tbViewPets.setItems(dadosFiltrados);
-        } else if (tabPane.getSelectionModel().getSelectedItem().getText().equals("Unidades")) {
-            ObservableList<Unidade> dadosFiltrados = filtrarUnidades(campo, filtro);
-            tbViewUnidades.setItems(dadosFiltrados);
-        } else if (tabPane.getSelectionModel().getSelectedItem().getText().equals("Veterinários")) {
-            ObservableList<Veterinario> dadosFiltrados = filtrarVeterinarios(campo, filtro);
-            tbViewVeterinarios.setItems(dadosFiltrados);
+        tabFilters.put(tabName, new Pair<>(campo, filtro));
+        switch (tabName) {
+            case "Agendamentos":
+                filteredAgendamentos.setPredicate(createAgendamentoPredicate(campo, filtro));
+                break;
+            case "Donos":
+                filteredDonos.setPredicate(createDonoPredicate(campo, filtro));
+                break;
+            case "Pets":
+                filteredPets.setPredicate(createPetPredicate(campo, filtro));
+                break;
+            case "Unidades":
+                filteredUnidades.setPredicate(createUnidadePredicate(campo, filtro));
+                break;
+            case "Veterinários":
+                filteredVeterinarios.setPredicate(createVeterinarioPredicate(campo, filtro));
+                break;
         }
-
     }
 
     public void btnRestaurar_Click(ActionEvent actionEvent) {
-        popularTabelaAgendamento();
-        popularTabelaDonos();
-        popularTabelaPets();
-        popularTabelaUnidades();
-        popularTabelaVeterinarios();
+        // Tirando os filtros
+        filteredAgendamentos.setPredicate(null);
+        filteredDonos.setPredicate(null);
+        filteredPets.setPredicate(null);
+        filteredUnidades.setPredicate(null);
+        filteredVeterinarios.setPredicate(null);
+
+        // Tirando os critérios
+        tabFilters.clear();
     }
 
-    private ObservableList<Agendamento> filtrarAgendamentos(String campo, String filtro) {
-        return dadosAgendamentos.filtered(agendamento -> {
+    // FUNÇÕES PARA FILTRAR O AGENDAMENTO DE ACORDO COM O PARÂMETRO PASSADO
+
+    private Predicate<Agendamento> createAgendamentoPredicate(String campo, String filtro) {
+        return agendamento -> {
             switch (campo) {
                 case "ID Agendamento":
-                    return String.valueOf(agendamento.getIdAgendamento()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(agendamento.getIdAgendamento()).contains(filtro);
                 case "ID Dono":
-                    return String.valueOf(agendamento.getDono().getIdDono()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(agendamento.getDono().getIdDono()).contains(filtro);
                 case "ID Pet":
-                    return String.valueOf(agendamento.getPet().getId()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(agendamento.getPet().getId()).contains(filtro);
                 case "ID Veterinario":
-                    return String.valueOf(agendamento.getVeterinario().getIdVeterinario()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(agendamento.getVeterinario().getIdVeterinario()).contains(filtro);
                 case "ID Unidade":
-                    return String.valueOf(agendamento.getUnidade().getIdUnidade()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(agendamento.getUnidade().getIdUnidade()).contains(filtro);
                 case "Especialidade":
-                    return agendamento.getEspecialidade().toLowerCase().contains(filtro.toLowerCase());
+                    return agendamento.getEspecialidade().toLowerCase().contains(filtro);
                 case "Data":
-                    return agendamento.getData().toString().toLowerCase().contains(filtro.toLowerCase());
+                    return agendamento.getData().toString().contains(filtro);
                 case "Horario":
-                    return agendamento.getHorario().toString().toLowerCase().contains(filtro.toLowerCase());
+                    return agendamento.getHorario().toString().contains(filtro);
                 default:
-                    return false;
+                    return true; // Mostrar todos se não houver filtros
             }
-        });
+        };
     }
 
-    private ObservableList<Dono> filtrarDonos(String campo, String filtro) {
-        return dadosDonos.filtered(dono -> {
+    private Predicate<Dono> createDonoPredicate(String campo, String filtro) {
+        return dono -> {
             switch (campo) {
                 case "ID Dono":
-                    return String.valueOf(dono.getIdDono()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(dono.getIdDono()).contains(filtro);
                 case "Nome":
-                    return dono.getNome().toLowerCase().contains(filtro.toLowerCase());
+                    return dono.getNome().toLowerCase().contains(filtro);
                 case "Email":
-                    return dono.getEmail().toLowerCase().contains(filtro.toLowerCase());
+                    return dono.getEmail().toLowerCase().contains(filtro);
                 case "CPF":
-                    return dono.getCpf().toLowerCase().contains(filtro.toLowerCase());
+                    return dono.getCpf().toLowerCase().contains(filtro);
                 case "Forma de Pagamento":
-                    return dono.getFormaPagamento().toLowerCase().contains(filtro.toLowerCase());
+                    return dono.getFormaPagamento().toLowerCase().contains(filtro);
                 case "Contato":
-                    return dono.getContato().toLowerCase().contains(filtro.toLowerCase());
+                    return dono.getContato().toLowerCase().contains(filtro);
                 default:
-                    return false;
+                    return true;
             }
-        });
+        };
     }
 
-    private ObservableList<Pet> filtrarPets(String campo, String filtro) {
-        return dadosPets.filtered(pet -> {
+    private Predicate<Pet> createPetPredicate(String campo, String filtro) {
+        return pet -> {
             switch (campo) {
                 case "ID Pet":
-                    return String.valueOf(pet.getId()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(pet.getId()).contains(filtro);
                 case "Nome":
-                    return pet.getNome().toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getNome() != null && pet.getNome().toLowerCase().contains(filtro);
                 case "Espécie":
-                    return pet.getEspecie().toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getEspecie() != null && pet.getEspecie().toLowerCase().contains(filtro);
                 case "ID Dono":
-                    return String.valueOf(pet.getDono().getIdDono()).toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getDono() != null && String.valueOf(pet.getDono().getIdDono()).contains(filtro);
                 case "Número Conveniado":
-                    return pet.getNumeroConveniado().toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getNumeroConveniado() != null && pet.getNumeroConveniado().toLowerCase().contains(filtro);
                 case "Raça":
-                    return pet.getRaca().toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getRaca() != null && pet.getRaca().toLowerCase().contains(filtro);
                 case "Data de Nascimento":
-                    return pet.getDataNascimento().toString().toLowerCase().contains(filtro.toLowerCase());
+                    return pet.getDataNascimento() != null && pet.getDataNascimento().toString().contains(filtro);
                 default:
-                    return false;
+                    return true;
             }
-        });
+        };
     }
 
-    private ObservableList<Unidade> filtrarUnidades(String campo, String filtro) {
-        return dadosUnidades.filtered(unidade -> {
+    private Predicate<Unidade> createUnidadePredicate(String campo, String filtro) {
+        return unidade -> {
             switch (campo) {
                 case "ID Unidade":
-                    return String.valueOf(unidade.getIdUnidade()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(unidade.getIdUnidade()).contains(filtro);
                 case "Nome":
-                    return unidade.getNome().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getNome().toLowerCase().contains(filtro);
                 case "CEP":
-                    return String.valueOf(unidade.getCep()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(unidade.getCep()).contains(filtro);
                 case "Rua":
-                    return unidade.getRua().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getRua().toLowerCase().contains(filtro);
                 case "Bairro":
-                    return unidade.getBairro().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getBairro().toLowerCase().contains(filtro);
                 case "Cidade":
-                    return unidade.getCidade().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getCidade().toLowerCase().contains(filtro);
                 case "UF":
-                    return unidade.getUf().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getUf().toLowerCase().contains(filtro);
                 case "Número":
-                    return unidade.getNumero().toLowerCase().contains(filtro.toLowerCase());
+                    return unidade.getNumero().toLowerCase().contains(filtro);
                 default:
-                    return false;
+                    return true;
             }
-        });
+        };
     }
 
-    private ObservableList<Veterinario> filtrarVeterinarios(String campo, String filtro) {
-        return dadosVeterinarios.filtered(veterinario -> {
+    private Predicate<Veterinario> createVeterinarioPredicate(String campo, String filtro) {
+        return veterinario -> {
             switch (campo) {
                 case "ID Veterinário":
-                    return String.valueOf(veterinario.getIdVeterinario()).toLowerCase().contains(filtro.toLowerCase());
+                    return String.valueOf(veterinario.getIdVeterinario()).contains(filtro);
                 case "Nome":
-                    return veterinario.getNome().toLowerCase().contains(filtro.toLowerCase());
+                    return veterinario.getNome() != null && veterinario.getNome().toLowerCase().contains(filtro);
                 case "CRMV":
-                    return veterinario.getCrmv().toLowerCase().contains(filtro.toLowerCase());
+                    return veterinario.getCrmv() != null && veterinario.getCrmv().toLowerCase().contains(filtro);
                 case "ID Unidade":
-                    return String.valueOf(veterinario.getUnidade().getIdUnidade()).toLowerCase().contains(filtro.toLowerCase());
+                    return veterinario.getUnidade() != null && String.valueOf(veterinario.getUnidade().getIdUnidade()).contains(filtro);
                 case "Status":
-                    return veterinario.getStatus().toLowerCase().contains(filtro.toLowerCase());
+                    return veterinario.getStatus() != null && veterinario.getStatus().toLowerCase().contains(filtro);
                 case "Especialidade":
-                    return veterinario.getEspecialidade().toLowerCase().contains(filtro.toLowerCase());
+                    return veterinario.getEspecialidade() != null && veterinario.getEspecialidade().toLowerCase().contains(filtro);
                 default:
-                    return false;
+                    return true;
+            }
+        };
+    }
+
+    // Setando Listener para quando o TabPane for alterado
+    // Alterarmos também os items do cbFiltros.
+    private void setarListenerMudancaDeTabela() {
+        Map<String, List<String>> tabFilterOptions = new HashMap<>();
+        tabFilterOptions.put("Agendamentos", Arrays.asList("ID Agendamento", "ID Dono", "ID Pet", "ID Veterinario", "ID Unidade", "Especialidade", "Data", "Horario"));
+        tabFilterOptions.put("Donos", Arrays.asList("ID Dono", "Nome", "Email", "CPF", "Forma de Pagamento", "Contato"));
+        tabFilterOptions.put("Pets", Arrays.asList("ID Pet", "Nome", "Espécie", "ID Dono", "Número Conveniado", "Raça", "Data de Nascimento"));
+        tabFilterOptions.put("Unidades", Arrays.asList("ID Unidade", "Nome", "CEP", "Rua", "Bairro", "Cidade", "UF", "Número"));
+        tabFilterOptions.put("Veterinários", Arrays.asList("ID Veterinário", "Nome", "CRMV", "ID Unidade", "Status", "Especialidade"));
+
+        tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldTab, newTab) -> {
+            String tabName = newTab.getText();
+            cbFiltros.setItems(FXCollections.observableArrayList(tabFilterOptions.getOrDefault(tabName, new ArrayList<>())));
+
+            // Automatically apply the filter when switching tabs
+            if (tabFilters.containsKey(tabName)) {
+                Pair<String, String> filter = tabFilters.get(tabName);
+                btnFiltrar_Click(null); // Simulate a filter click with the stored criteria
+            } else {
+                btnRestaurar_Click(null); // Clear the filter if no criteria is stored for this tab
             }
         });
     }
+
 }
