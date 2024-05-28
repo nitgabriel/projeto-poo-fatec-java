@@ -9,12 +9,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
 import br.com.fatec.DAO.*;
-import br.com.fatec.exceptions.AgendamentoInvalidoException;
 import br.com.fatec.exceptions.InvalidDateException;
 import br.com.fatec.exceptions.InvalidOwnerException;
 import br.com.fatec.model.*;
@@ -24,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
@@ -69,7 +68,11 @@ public class GerenciarAgendamentosController implements Initializable {
     @FXML
     private ComboBox<Veterinario> cbVeterinarios;
     @FXML
-    private ComboBox<Agendamento> cbAgendamentos;
+    private RadioButton rbAgendar;
+    @FXML
+    private RadioButton rbVisualizarAgend;
+    @FXML
+    private TableView<Agendamento> tbViewAgendamentos;
 
     /**
      * Initializes the controller class.
@@ -78,31 +81,26 @@ public class GerenciarAgendamentosController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         controls = Arrays.asList(txtEspecialidade, dpDataAgend, cbDonos, cbPets, cbUnidade, cbHorarios, cbVeterinarios);
         dpDataAgend.valueProperty().addListener((observable, oldValue, newValue) -> {
-            //  Criando uma lista de horários disponíveis.
-            List<LocalTime> horariosDisponiveis = new ArrayList<>();
-            for (int i = 10; i <= 16; i++) {
-                horariosDisponiveis.add(LocalTime.of(i, 0));
-            }
-
-            // Consultando o banco de dados para obter os horários ocupados.
-            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-            Collection<Agendamento> agendamentos = null;
             if (newValue != null) {
                 try {
-                    agendamentos = agendamentoDAO.lista("data = '" + newValue + "'");
+                    List<LocalTime> horarios;
+                    if (rbAgendar.isSelected()) {
+                        horarios = getHorariosDisponiveisPorData(newValue);
+                    } else {
+                        horarios = getHorariosAgendadosPorData(newValue);
+                    }
+                    // Adicione os horários ao ComboBox.
+                    ObservableList<LocalTime> horariosList = FXCollections.observableArrayList(horarios);
+                    cbHorarios.setItems(horariosList);
+                    // Atualize a TableView
+                    if (rbAgendar.isSelected()) {
+                        tbViewAgendamentos.setItems(getHorariosDisponiveis(newValue));
+                    } else if (rbVisualizarAgend.isSelected()) {
+                        tbViewAgendamentos.setItems(getAgendamentosPorData(newValue));
+                    }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-
-
-                // Removendo os horários ocupados da lista de horários disponíveis.
-                for (Agendamento agendamento : agendamentos) {
-                    horariosDisponiveis.remove(agendamento.getHorario());
-                }
-
-                // Adiciona os horários disponíveis ao ComboBox.
-                ObservableList<LocalTime> horarios = FXCollections.observableArrayList(horariosDisponiveis);
-                cbHorarios.setItems(horarios);
             }
         });
 
@@ -143,32 +141,6 @@ public class GerenciarAgendamentosController implements Initializable {
             List<Medicamento> medicamentos = GerenciarMedicamentosController.getMedicamentoList();
             cbMedicamentos.setItems(FXCollections.observableArrayList(medicamentos));
 
-            atualizarAgendamentos();
-
-            cbAgendamentos.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-                if (newValue != null) {
-                    Agendamento selectedAgendamento = newValue;
-                    cbDonos.setValue(selectedAgendamento.getDono());
-                    cbPets.setValue(selectedAgendamento.getPet());
-                    cbVeterinarios.setValue(selectedAgendamento.getVeterinario());
-                    cbUnidade.setValue(selectedAgendamento.getUnidade());
-                    txtEspecialidade.setText(selectedAgendamento.getEspecialidade());
-                    dpDataAgend.setValue(selectedAgendamento.getData());
-                    cbHorarios.setValue(selectedAgendamento.getHorario());
-                } else {
-                    controls.forEach(control -> {
-                        if (control instanceof TextField) {
-                            ((TextField) control).clear();
-                        } else if (control instanceof ComboBox) {
-                            ((ComboBox<?>) control).setValue(null);
-                        } else if (control instanceof DatePicker) {
-                            ((DatePicker) control).setValue(null);
-                        }
-                    });
-                }
-            });
-
-
         } catch (SQLException e) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO LOCALIZAR OS DADOS.");
         }
@@ -194,6 +166,13 @@ public class GerenciarAgendamentosController implements Initializable {
             }
         };
         dpDataAgend.setDayCellFactory(dayCellFactory);
+
+        btnRegistrarAgendamento.setDisable(true);
+        btnAlterarAgendamento.setDisable(true);
+        btnExcluirAgendamento.setDisable(true);
+        btnConsultarAgendamento.setDisable(true);
+
+        addListenerRadioButtons();
     }
 
     @FXML
@@ -204,13 +183,8 @@ public class GerenciarAgendamentosController implements Initializable {
             try {
                 validateDate(dpDataAgend.getValue());
                 validateOwner(cbPets.getValue(), cbDonos.getValue());
-                validateAgendamentoSelection(cbAgendamentos.getValue());
 
-                Agendamento agendamento = new Agendamento(cbDonos.getValue(), cbPets.getValue(), cbVeterinarios.getValue(), cbUnidade.getValue());
-                agendamento.setEspecialidade(txtEspecialidade.getText());
-                agendamento.setData(dpDataAgend.getValue());
-                agendamento.setHorario(cbHorarios.getValue());
-
+                Agendamento agendamento = carrega_Agendamento();
                 AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
                 if (agendamentoDAO.insere(agendamento)) {
                     showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "AGENDAMENTO REGISTRADO COM SUCESSO.");
@@ -218,16 +192,15 @@ public class GerenciarAgendamentosController implements Initializable {
                         if (control instanceof TextField) {
                             ((TextField) control).clear();
                         } else if (control instanceof ComboBox) {
-                            ((ComboBox<?>) control).setValue(null);
+                            ((ComboBox<?>) control).getSelectionModel().clearSelection();
                         } else if (control instanceof DatePicker) {
-                            ((DatePicker) control).setValue(null);
+                            ((DatePicker) control).getEditor().clear();
                         }
-                        atualizarAgendamentos();
                     });
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR AGENDAMENTO.");
                 }
-            } catch (InvalidDateException | InvalidOwnerException | SQLException | AgendamentoInvalidoException e) {
+            } catch (InvalidDateException | InvalidOwnerException | SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REGISTRAR AGENDAMENTO:\n" + e.getMessage());
             }
         }
@@ -238,77 +211,66 @@ public class GerenciarAgendamentosController implements Initializable {
         if(areFieldsEmpty(controls)) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE ALTERAR UM AGENDAMENTO.");
         } else {
-            if( cbAgendamentos.getValue() != null) {
-                try {
-                    validateDate(dpDataAgend.getValue());
-                    validateOwner(cbPets.getValue(), cbDonos.getValue());
+            try {
+                validateDate(dpDataAgend.getValue());
+                validateOwner(cbPets.getValue(), cbDonos.getValue());
 
-                    Agendamento selectedAgendamento = cbAgendamentos.getValue();
+                AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+                Agendamento selectedAgendamento = agendamentoDAO.buscaPorDataHorario(dpDataAgend.getValue(), cbHorarios.getValue());
 
-                    if (selectedAgendamento != null) {
-                        selectedAgendamento.setDono(cbDonos.getValue());
-                        selectedAgendamento.setPet(cbPets.getValue());
-                        selectedAgendamento.setVeterinario(cbVeterinarios.getValue());
-                        selectedAgendamento.setUnidade(cbUnidade.getValue());
-                        selectedAgendamento.setEspecialidade(txtEspecialidade.getText());
-                        selectedAgendamento.setData(dpDataAgend.getValue());
-                        selectedAgendamento.setHorario(cbHorarios.getValue());
+                if (selectedAgendamento != null) {
+                    Agendamento agendamento = carrega_Agendamento();
+                    agendamento.setIdAgendamento(selectedAgendamento.getIdAgendamento());
 
-                        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-                        if (agendamentoDAO.altera(selectedAgendamento)) {
-                            showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "AGENDAMENTO ALTERADO COM SUCESSO.");
-                            controls.forEach(control -> {
-                                if (control instanceof TextField) {
-                                    ((TextField) control).clear();
-                                } else if (control instanceof ComboBox) {
-                                    ((ComboBox<?>) control).setValue(null);
-                                } else if (control instanceof DatePicker) {
-                                    ((DatePicker) control).setValue(null);
-                                }
-                                atualizarAgendamentos();
-                            });
-                        } else {
-                            showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR AGENDAMENTO.");
-                        }
+                    if (agendamentoDAO.altera(agendamento)) {
+                        showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "AGENDAMENTO ALTERADO COM SUCESSO.");
+                        controls.forEach(control -> {
+                            if (control instanceof TextField) {
+                                ((TextField) control).clear();
+                            } else if (control instanceof ComboBox) {
+                                ((ComboBox<?>) control).getSelectionModel().clearSelection();
+                            } else if (control instanceof DatePicker) {
+                                ((DatePicker) control).getEditor().clear();
+                            }
+                        });
                     } else {
-                        showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI ENCONTRADO UM AGENDAMENTO COM A DATA E HORÁRIO INFORMADOS.");
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR AGENDAMENTO.");
                     }
-                } catch (InvalidDateException | InvalidOwnerException | SQLException e) {
-                    showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REGISTRAR AGENDAMENTO:\n" + e.getMessage());
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI ENCONTRADO UM AGENDAMENTO COM A DATA E HORÁRIO INFORMADOS.");
                 }
-            } else {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "SELECIONE UM AGENDAMENTO PARA ALTERAR.");
+            } catch (InvalidDateException | InvalidOwnerException | SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REGISTRAR AGENDAMENTO:\n" + e.getMessage());
             }
         }
     }
 
     @FXML
     private void btnExcluirAgendamento_Click(ActionEvent event) {
-        if(cbAgendamentos.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "SELECIONE UM AGENDAMENTO PARA EXCLUIR.");
+        if(dpDataAgend.getValue() == null || cbHorarios.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "SELECIONE UMA DATA E HORÁRIO PARA EXCLUIR UM AGENDAMENTO.");
         } else {
             try {
                 AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-                Agendamento agendamento = cbAgendamentos.getValue();
+                Agendamento selectedAgendamento = agendamentoDAO.buscaPorDataHorario(dpDataAgend.getValue(), cbHorarios.getValue());
 
-                if (agendamento != null) {
-                    if (agendamentoDAO.remove(agendamento)) {
+                if (selectedAgendamento != null) {
+                    if (agendamentoDAO.remove(selectedAgendamento)) {
                         showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "AGENDAMENTO EXCLUÍDO COM SUCESSO.");
                         controls.forEach(control -> {
                             if (control instanceof TextField) {
                                 ((TextField) control).clear();
                             } else if (control instanceof ComboBox) {
-                                ((ComboBox<?>) control).setValue(null);
+                                ((ComboBox<?>) control).getSelectionModel().clearSelection();
                             } else if (control instanceof DatePicker) {
-                                ((DatePicker) control).setValue(null);
+                                ((DatePicker) control).getEditor().clear();
                             }
-                            atualizarAgendamentos();
                         });
                     } else {
-                        showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO EXCLUIR AGENDAMENTO.\n");
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO EXCLUIR AGENDAMENTO.");
                     }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL EXCLUIR.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI ENCONTRADO UM AGENDAMENTO COM A DATA E HORÁRIO INFORMADOS.");
                 }
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO EXCLUIR AGENDAMENTO: " + e.getMessage());
@@ -318,17 +280,27 @@ public class GerenciarAgendamentosController implements Initializable {
 
     @FXML
     private void btnConsultarAgendamento_Click(ActionEvent event) {
-        Agendamento selectedAgendamento = cbAgendamentos.getValue();
-        if (selectedAgendamento != null) {
-            cbDonos.setValue(selectedAgendamento.getDono());
-            cbPets.setValue(selectedAgendamento.getPet());
-            cbVeterinarios.setValue(selectedAgendamento.getVeterinario());
-            cbUnidade.setValue(selectedAgendamento.getUnidade());
-            txtEspecialidade.setText(selectedAgendamento.getEspecialidade());
-            dpDataAgend.setValue(selectedAgendamento.getData());
-            cbHorarios.setValue(selectedAgendamento.getHorario());
+        if(dpDataAgend.getValue() == null || cbHorarios.getValue() == null) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "SELECIONE UMA DATA E HORÁRIO PARA EXCLUIR UM AGENDAMENTO.");
         } else {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "SELECIONE UM AGENDAMENTO PARA CONSULTAR.");
+            try {
+                AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+                Agendamento selectedAgendamento = agendamentoDAO.buscaPorDataHorario(dpDataAgend.getValue(), cbHorarios.getValue());
+
+                if (selectedAgendamento != null) {
+                    carregar_Campos(selectedAgendamento);
+                    // Habilita os botões de alterar e excluir
+                    btnAlterarAgendamento.setDisable(false);
+                    btnExcluirAgendamento.setDisable(false);
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI ENCONTRADO UM AGENDAMENTO COM A DATA E HORÁRIO INFORMADOS.");
+                    // Desabilita os botões de alterar e excluir
+                    btnAlterarAgendamento.setDisable(true);
+                    btnExcluirAgendamento.setDisable(true);
+                }
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO CONSULTAR AGENDAMENTO: " + e.getMessage());
+            }
         }
     }
 
@@ -371,7 +343,6 @@ public class GerenciarAgendamentosController implements Initializable {
         alert.showAndWait();
     }
 
-
     public static void validateDate(LocalDate date) throws InvalidDateException {
         if (date.isBefore(LocalDate.now())) {
             throw new InvalidDateException("Não é possível agendar um agendamento para uma data anterior ao dia atual.");
@@ -384,23 +355,170 @@ public class GerenciarAgendamentosController implements Initializable {
         }
     }
 
-    public static void validateAgendamentoSelection(Agendamento agendamento) throws AgendamentoInvalidoException {
-        if (agendamento != null) {
-            throw new AgendamentoInvalidoException("Desselecione o agendamento selecionado para registrar um novo agendamento.");
+    public void addListenerRadioButtons() {
+        ToggleGroup group = new ToggleGroup();
+        rbAgendar.setToggleGroup(group);
+        rbVisualizarAgend.setToggleGroup(group);
+
+        group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            RadioButton selectedRadioButton = (RadioButton) newValue;
+            if (selectedRadioButton == rbAgendar) {
+                atualizarTbViewAgendar();
+                btnRegistrarAgendamento.setDisable(false);
+                btnAlterarAgendamento.setDisable(true);
+                btnExcluirAgendamento.setDisable(true);
+                btnConsultarAgendamento.setDisable(true);
+            } else if (selectedRadioButton == rbVisualizarAgend) {
+                atualizarTbViewVisualizar();
+                btnRegistrarAgendamento.setDisable(true);
+                btnAlterarAgendamento.setDisable(true);
+                btnExcluirAgendamento.setDisable(true);
+                btnConsultarAgendamento.setDisable(false);
+            }
+        });
+    }
+
+    private void atualizarTbViewAgendar() {
+        tbViewAgendamentos.getItems().clear();
+        tbViewAgendamentos.getColumns().clear();
+
+        // Adicione as colunas para mostrar a data e o horário
+        TableColumn<Agendamento, LocalDate> dateColumn = new TableColumn<>("Data");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
+
+        TableColumn<Agendamento, LocalTime> timeColumn = new TableColumn<>("Horário");
+        timeColumn.setCellValueFactory(new PropertyValueFactory<>("horario"));
+
+        tbViewAgendamentos.getColumns().add(dateColumn);
+        tbViewAgendamentos.getColumns().add(timeColumn);
+
+        // Adicione os dados dos horários disponíveis
+        LocalDate selectedDate = dpDataAgend.getValue();
+        if (selectedDate != null) {
+            tbViewAgendamentos.setItems(getHorariosDisponiveis(selectedDate));
         }
     }
 
-    private void atualizarAgendamentos() {
+    private void atualizarTbViewVisualizar() {
+        tbViewAgendamentos.getItems().clear();
+        tbViewAgendamentos.getColumns().clear();
+
+        // Adicione as colunas para mostrar os detalhes do agendamento
+        TableColumn<Agendamento, LocalDate> dateColumn = new TableColumn<>("Data");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
+
+        TableColumn<Agendamento, LocalTime> timeColumn = new TableColumn<>("Horário");
+        timeColumn.setCellValueFactory(new PropertyValueFactory<>("horario"));
+
+        TableColumn<Agendamento, Dono> ownerColumn = new TableColumn<>("Dono");
+        ownerColumn.setCellValueFactory(new PropertyValueFactory<>("dono"));
+
+        TableColumn<Agendamento, Pet> petColumn = new TableColumn<>("Pet");
+        petColumn.setCellValueFactory(new PropertyValueFactory<>("pet"));
+
+        TableColumn<Agendamento, Unidade> unitColumn = new TableColumn<>("Unidade");
+        unitColumn.setCellValueFactory(new PropertyValueFactory<>("unidade"));
+
+        TableColumn<Agendamento, Veterinario> vetColumn = new TableColumn<>("Veterinário");
+        vetColumn.setCellValueFactory(new PropertyValueFactory<>("veterinario"));
+
+        // Adicione as colunas na ordem desejada
+        tbViewAgendamentos.getColumns().addAll(dateColumn, timeColumn, ownerColumn, petColumn, unitColumn, vetColumn);
+
+        // Adicione os dados dos agendamentos existentes
+        tbViewAgendamentos.setItems(getAgendamentosExistentes());
+    }
+
+    private List<LocalTime> getHorariosDisponiveisPorData(LocalDate date) throws SQLException {
+        // Criando uma lista de horários disponíveis.
+        List<LocalTime> horariosDisponiveis = new ArrayList<>();
+        for (int i = 10; i <= 16; i++) {
+            horariosDisponiveis.add(LocalTime.of(i, 0));
+        }
+
+        // Consultando o banco de dados para obter os horários ocupados.
         AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+        Collection<Agendamento> agendamentos = agendamentoDAO.lista("data = '" + date + "'");
+
+        // Removendo os horários ocupados da lista de horários disponíveis.
+        for (Agendamento agendamento : agendamentos) {
+            horariosDisponiveis.remove(agendamento.getHorario());
+        }
+
+        return horariosDisponiveis;
+    }
+
+    private ObservableList<Agendamento> getHorariosDisponiveis(LocalDate date) {
         try {
-            Collection<Agendamento> agendamentos = agendamentoDAO.lista("");
-            List<Agendamento> agendamentosList = new ArrayList<>();
-            agendamentosList.add(null); // Adiciona um item "null" à lista
-            agendamentosList.addAll(agendamentos); // Adiciona todos os agendamentos após o "null"
-            cbAgendamentos.setItems(FXCollections.observableArrayList(agendamentosList));
+            List<LocalTime> availableTimes = getHorariosDisponiveisPorData(date);
+            ObservableList<Agendamento> availableAppointments = FXCollections.observableArrayList();
+            for (LocalTime time : availableTimes) {
+                Agendamento agendamento = new Agendamento(null, null, null, null);
+                agendamento.setData(date);
+                agendamento.setHorario(time);
+                availableAppointments.add(agendamento);
+            }
+            return availableAppointments;
         } catch (SQLException e) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO LOCALIZAR OS AGENDAMENTOS.");
+            throw new RuntimeException(e);
         }
     }
 
+    private ObservableList<Agendamento> getAgendamentosExistentes() {
+        try {
+            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+            Collection<Agendamento> agendamentos = agendamentoDAO.lista("");
+            return FXCollections.observableArrayList(agendamentos);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<LocalTime> getHorariosAgendadosPorData(LocalDate date) throws SQLException {
+        // Criando uma lista de horários ocupados.
+        List<LocalTime> horariosOcupados = new ArrayList<>();
+
+        // Consultando o banco de dados para obter os horários ocupados.
+        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+        Collection<Agendamento> agendamentos = agendamentoDAO.lista("data = '" + date + "'");
+
+        // Adicionando os horários ocupados à lista de horários ocupados.
+        for (Agendamento agendamento : agendamentos) {
+            horariosOcupados.add(agendamento.getHorario());
+        }
+
+        return horariosOcupados;
+    }
+
+    private ObservableList<Agendamento> getAgendamentosPorData(LocalDate date) {
+        try {
+            AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+            Collection<Agendamento> agendamentos = agendamentoDAO.lista("data = '" + date + "'");
+            return FXCollections.observableArrayList(agendamentos);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Agendamento carrega_Agendamento() {
+        Agendamento agendamento = new Agendamento(null, null, null, null);
+        agendamento.setDono(cbDonos.getValue());
+        agendamento.setPet(cbPets.getValue());
+        agendamento.setVeterinario(cbVeterinarios.getValue());
+        agendamento.setUnidade(cbUnidade.getValue());
+        agendamento.setEspecialidade(txtEspecialidade.getText());
+        agendamento.setData(dpDataAgend.getValue());
+        agendamento.setHorario(cbHorarios.getValue());
+        return agendamento;
+    }
+
+    private void carregar_Campos(Agendamento agendamento) {
+        cbDonos.setValue(agendamento.getDono());
+        cbPets.setValue(agendamento.getPet());
+        cbVeterinarios.setValue(agendamento.getVeterinario());
+        cbUnidade.setValue(agendamento.getUnidade());
+        txtEspecialidade.setText(agendamento.getEspecialidade());
+        dpDataAgend.setValue(agendamento.getData());
+        cbHorarios.setValue(agendamento.getHorario());
+    }
 }
