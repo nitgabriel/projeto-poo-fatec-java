@@ -421,9 +421,9 @@ public class ConsultarInformacoesController implements Initializable {
             // Automatically apply the filter when switching tabs
             if (tabFilters.containsKey(tabName)) {
                 Pair<String, String> filter = tabFilters.get(tabName);
-                btnFiltrar_Click(null); // Simulate a filter click with the stored criteria
+                btnFiltrar_Click(null);
             } else {
-                btnRestaurar_Click(null); // Clear the filter if no criteria is stored for this tab
+                btnRestaurar_Click(null);
             }
         });
     }

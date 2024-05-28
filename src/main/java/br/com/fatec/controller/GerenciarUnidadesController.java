@@ -86,12 +86,38 @@ public class GerenciarUnidadesController implements Initializable {
         txtUnidade.setTextFormatter(new TextFormatter<String>(filter));
         txtCep.setTextFormatter(new TextFormatter<String>(filter));
         cbUF.getItems().addAll("AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO");
-
+        btnAlterarUnidade.setDisable(true);
+        btnExcluirUnidade.setDisable(true);
     }
 
     private void setNextAvailableId() throws SQLException {
         nextId = unidadeDAO.getNextId();
-        txtUnidade.setText(String.valueOf(nextId));
+        txtUnidade.setPromptText(String.valueOf(nextId));
+        txtUnidade.setText(""); // Limpar o campo de texto
+    }
+
+    private Unidade carregar_Unidade() {
+        Unidade unidade = new Unidade();
+        unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
+        unidade.setNome(txtNome.getText());
+        unidade.setCep(Integer.parseInt(txtCep.getText()));
+        unidade.setRua(txtRua.getText());
+        unidade.setBairro(txtBairro.getText());
+        unidade.setCidade(txtCidade.getText());
+        unidade.setUf(cbUF.getValue());
+        unidade.setNumero(txtNumero.getText());
+        return unidade;
+    }
+
+    private void carregar_Campos(Unidade unidade) {
+        txtUnidade.setText(String.valueOf(unidade.getIdUnidade()));
+        txtNome.setText(unidade.getNome());
+        txtCep.setText(String.valueOf(unidade.getCep()));
+        txtRua.setText(unidade.getRua());
+        txtBairro.setText(unidade.getBairro());
+        txtCidade.setText(unidade.getCidade());
+        cbUF.setValue(unidade.getUf());
+        txtNumero.setText(unidade.getNumero());
     }
 
     @FXML
@@ -99,26 +125,18 @@ public class GerenciarUnidadesController implements Initializable {
         if (fields.stream().anyMatch(field -> field.getText().isEmpty()) || cbUF.getValue() == null) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR INSERIR DADOS NO SISTEMA.");
         } else {
-            Unidade unidade = new Unidade();
-            unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
-            unidade.setCidade(txtCidade.getText());
-            unidade.setCep(Integer.parseInt(txtCep.getText()));
-            unidade.setBairro(txtBairro.getText());
-            unidade.setRua(txtRua.getText());
-            unidade.setUf(cbUF.getValue());
-            unidade.setNumero(txtNumero.getText());
-            unidade.setNome(txtNome.getText());
+            Unidade unidade = carregar_Unidade();
             try {
-                if(unidadeDAO.insere(unidade)) {
-                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS INSERIDOS COM SUCESSO.");
-                    setNextAvailableId(); // Atualiza o próximo ID disponível
+                if (unidadeDAO.insere(unidade)) {
+                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "UNIDADE REGISTRADA COM SUCESSO.");
                     fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                    cbUF.setValue(null); // Limpa o ComboBox
                     setNextAvailableId();
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO INSERIR DADOS.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR UNIDADE.");
                 }
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO INSERIR DADOS: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REGISTRAR UNIDADE: " + e.getMessage());
             }
         }
     }
@@ -128,26 +146,27 @@ public class GerenciarUnidadesController implements Initializable {
         if (fields.stream().anyMatch(field -> field.getText().isEmpty()) || cbUF.getValue() == null) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR ALTERAR DADOS NO SISTEMA.");
         } else {
-            Unidade unidade = new Unidade();
-            unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
-            unidade.setCidade(txtCidade.getText());
-            unidade.setCep(Integer.parseInt(txtCep.getText()));
-            unidade.setBairro(txtBairro.getText());
-            unidade.setRua(txtRua.getText());
-            unidade.setUf(cbUF.getValue());
-            unidade.setNumero(txtNumero.getText());
-            unidade.setNome(txtNome.getText());
             try {
-                if(unidadeDAO.altera(unidade)) {
-                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS ALTERADOS COM SUCESSO.");
-                    setNextAvailableId(); // Atualiza o próximo ID disponível
-                    fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
-                    setNextAvailableId();
+                Unidade unidade = new Unidade();
+                unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
+                unidade = unidadeDAO.buscaID(unidade);
+                if (unidade != null) {
+                    unidade = carregar_Unidade(); // Atualiza os dados da unidade com os valores dos campos
+                    if (unidadeDAO.altera(unidade)) {
+                        showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "UNIDADE ALTERADA COM SUCESSO.");
+                        fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                        cbUF.setValue(null); // Limpa o ComboBox
+                        setNextAvailableId();
+                        btnAlterarUnidade.setDisable(true); // Bloqueando botões para solicitar nova consulta
+                        btnExcluirUnidade.setDisable(true);
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR UNIDADE.");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR DADOS.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "UNIDADE COM ID INFORMADO NÃO ENCONTRADA.");
                 }
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO ALTERAR DADOS: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO ALTERAR UNIDADE: " + e.getMessage());
             }
         }
     }
@@ -157,19 +176,25 @@ public class GerenciarUnidadesController implements Initializable {
         if (txtUnidade.getText().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O ID DA UNIDADE PARA EXCLUIR OS DADOS.");
         } else {
-            Unidade unidade = new Unidade();
-            unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
             try {
-                if(unidadeDAO.remove(unidade)) {
-                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS REMOVIDOS COM SUCESSO.");
-                    setNextAvailableId(); // Atualiza o próximo ID disponível
-                    fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
-                    setNextAvailableId();
+                Unidade unidade = new Unidade();
+                unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
+                unidade = unidadeDAO.buscaID(unidade);
+                if (unidade != null) {
+                    if (unidadeDAO.remove(unidade)) {
+                        showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "UNIDADE REMOVIDA COM SUCESSO.");
+                        fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                        cbUF.setValue(null); // Limpa o ComboBox
+                        btnAlterarUnidade.setDisable(true); // Bloqueando botões para solicitar nova consulta
+                        btnExcluirUnidade.setDisable(true);
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL REMOVER A UNIDADE.");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "ID NÃO ENCONTRADO.\nNÃO FOI POSSÍVEL REMOVER OS DADOS.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "UNIDADE COM ID INFORMADO NÃO ENCONTRADA.");
                 }
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO EXCLUIR DADOS: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REMOVER UNIDADE: " + e.getMessage());
             }
         }
     }
@@ -179,23 +204,25 @@ public class GerenciarUnidadesController implements Initializable {
         if (txtUnidade.getText().isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O ID DA UNIDADE PARA CONSULTAR OS DADOS.");
         } else {
-            Unidade unidade = new Unidade();
-            unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
             try {
+                Unidade unidade = new Unidade();
+                unidade.setIdUnidade(Integer.parseInt(txtUnidade.getText()));
                 unidade = unidadeDAO.buscaID(unidade);
                 if (unidade != null) {
-                    txtCidade.setText(unidade.getCidade());
-                    txtCep.setText(String.valueOf(unidade.getCep()));
-                    txtBairro.setText(unidade.getBairro());
-                    txtRua.setText(unidade.getRua());
-                    cbUF.setValue(unidade.getUf());
-                    txtNumero.setText(unidade.getNumero());
-                    txtNome.setText(unidade.getNome());
+                    carregar_Campos(unidade);
+                    // Habilita os botões após a consulta bem-sucedida
+                    btnAlterarUnidade.setDisable(false);
+                    btnExcluirUnidade.setDisable(false);
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "ID DA UNIDADE NÃO ENCONTRADO.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "UNIDADE COM ID INFORMADO NÃO ENCONTRADA.");
+                    // Desabilita os botões se a consulta falhar
+                    btnAlterarUnidade.setDisable(true);
+                    btnExcluirUnidade.setDisable(true);
+                    // Define o objeto unidade como null se a consulta falhar
+                    unidade = null;
                 }
             } catch (SQLException e) {
-                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO CONSULTAR DADOS: " + e.getMessage());
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO CONSULTAR UNIDADE: " + e.getMessage());
             }
         }
     }

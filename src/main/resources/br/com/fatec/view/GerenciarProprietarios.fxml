@@ -14,12 +14,12 @@
     </stylesheets>
    <children>
       <Pane id="gerenciaProprietariosTop" prefHeight="117.0" prefWidth="930.0" stylesheets="@../styles/gerenciarproprietarios.css" />  
-      <Label layoutX="122.0" layoutY="168.0" text="NOME">
+      <Label layoutX="419.0" layoutY="168.0" text="NOME">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtNomeProprietario" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtNomeProprietario" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
       <Label layoutX="122.0" layoutY="234.0" text="CPF">
          <font>
             <Font name="Arial Bold" size="14.0" />
@@ -32,18 +32,18 @@
          </font>
       </Label>
       <TextField fx:id="txtContatoProprietario" layoutX="122.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="419.0" layoutY="168.0" text="E-MAIL">
+      <Label layoutX="419.0" layoutY="234.0" text="E-MAIL">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtEmailProprietario" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="419.0" layoutY="234.0" text="FORMA DE PAGAMENTO">
+      <TextField fx:id="txtEmailProprietario" layoutX="419.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="419.0" layoutY="300.0" text="FORMA DE PAGAMENTO">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtPagamentoProprietario" layoutX="419.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtPagamentoProprietario" layoutX="419.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
         
       <Button fx:id="btnRegistrarProprietario" layoutX="683.0" layoutY="147.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarProprietario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesDonos" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
          <font>
@@ -62,5 +62,11 @@
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
       <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+      <TextField fx:id="txtIdDono" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="168.0" text="ID DONO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

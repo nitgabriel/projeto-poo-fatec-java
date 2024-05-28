@@ -62,18 +62,21 @@ public class GerenciarPetsController implements Initializable {
     private List<TextField> fields;
 
     private PetDAO petDAO = new PetDAO();
+    @FXML
+    private TextField txtIdPet;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        fields = Arrays.asList(txtNomePet, txtEspeciePet, txtRacaPet, txtNumeroConveniado);
+        fields = Arrays.asList(txtNomePet, txtEspeciePet, txtRacaPet, txtNumeroConveniado, txtIdPet);
         DonoDAO donoDAO = new DonoDAO();
         try {
             Collection<Dono> donos = donoDAO.lista("");
             ObservableList<Dono> observableDonos = FXCollections.observableArrayList(donos);
             cbDonos.setItems(observableDonos);
+            setNextAvailableId();
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO CARREGAR DONOS: " + e.getMessage());
         }
@@ -87,19 +90,17 @@ public class GerenciarPetsController implements Initializable {
             return null;
         };
         txtNumeroConveniado.setTextFormatter(new TextFormatter<String>(filter));
-    }    
+
+        btnAlterarPet.setDisable(true);
+        btnExcluirPet.setDisable(true);
+    }
 
     @FXML
     private void btnRegistrarPet_Click(ActionEvent event) {
         if (fields.stream().anyMatch(field -> field.getText().isEmpty()) || cbDonos.getValue() == null || datePickerNascimento.getValue() == null) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR INSERIR DADOS NO SISTEMA.");
         } else {
-            Pet pet = new Pet(cbDonos.getValue());
-            pet.setNome(txtNomePet.getText());
-            pet.setEspecie(txtEspeciePet.getText());
-            pet.setRaca(txtRacaPet.getText());
-            pet.setNumeroConveniado(txtNumeroConveniado.getText());
-            pet.setDataNascimento(datePickerNascimento.getValue());
+            Pet pet = carregar_Pet();
             try {
                 if (petDAO.insere(pet)) {
                     showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "PET REGISTRADO COM SUCESSO.");
@@ -121,25 +122,24 @@ public class GerenciarPetsController implements Initializable {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR ALTERAR DADOS NO SISTEMA.");
         } else {
             try {
-            Pet pet = petDAO.buscaPorNumeroConveniado(txtNumeroConveniado.getText());
+                Pet pet = new Pet(null);
+                pet.setId(Integer.parseInt(txtIdPet.getText()));
+                pet = petDAO.buscaID(pet);
                 if (pet != null) {
-                    pet.setNome(txtNomePet.getText());
-                    pet.setEspecie(txtEspeciePet.getText());
-                    pet.setRaca(txtRacaPet.getText());
-                    pet.setDono(cbDonos.getValue());
-                    pet.setNumeroConveniado(txtNumeroConveniado.getText());
-                    pet.setDataNascimento(datePickerNascimento.getValue());
-
+                    pet = carregar_Pet(); // Atualiza os dados do pet com os valores dos campos
                     if (petDAO.altera(pet)) {
                         showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "PET ALTERADO COM SUCESSO.");
                         fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
                         datePickerNascimento.setValue(null); // Limpa o DatePicker
                         cbDonos.setValue(null); // Limpa o ComboBox
+                        setNextAvailableId();
+                        btnAlterarPet.setDisable(true); // Bloqueando botões para solicitar nova consulta
+                        btnExcluirPet.setDisable(true);
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR PET.");
                     }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM NÚMERO CONVENIADO INFORMADO NÃO ENCONTRADO.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM ID INFORMADO NÃO ENCONTRADO.");
                 }
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO ALTERAR PET: " + e.getMessage());
@@ -149,22 +149,26 @@ public class GerenciarPetsController implements Initializable {
 
     @FXML
     private void btnExcluirPet_Click(ActionEvent event) {
-        if (txtNumeroConveniado.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O NÚMERO CONVENIADO DO PET PARA EXCLUIR OS DADOS.");
+        if (txtIdPet.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O ID DO PET PARA EXCLUIR OS DADOS.");
         } else {
             try {
-                Pet pet = petDAO.buscaPorNumeroConveniado(txtNumeroConveniado.getText());
+                Pet pet = new Pet(null);
+                pet.setId(Integer.parseInt(txtIdPet.getText()));
+                pet = petDAO.buscaID(pet);
                 if (pet != null) {
                     if (petDAO.remove(pet)) {
                         showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "PET REMOVIDO COM SUCESSO.");
                         fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
                         datePickerNascimento.setValue(null); // Limpa o DatePicker
                         cbDonos.setValue(null); // Limpa o ComboBox
+                        btnAlterarPet.setDisable(true); // Bloqueando botões para solicitar nova consulta
+                        btnExcluirPet.setDisable(true);
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL REMOVER O PET.");
                     }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM NÚMERO CONVENIADO INFORMADO NÃO ENCONTRADO.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM ID INFORMADO NÃO ENCONTRADO.");
                 }
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REMOVER PET: " + e.getMessage());
@@ -174,19 +178,25 @@ public class GerenciarPetsController implements Initializable {
 
     @FXML
     private void btnConsultarPet_Click(ActionEvent event) {
-        if (txtNumeroConveniado.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O NÚMERO CONVENIADO DO PET PARA CONSULTAR OS DADOS.");
+        if (txtIdPet.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O ID DO PET PARA CONSULTAR OS DADOS.");
         } else {
             try {
-                Pet pet = petDAO.buscaPorNumeroConveniado(txtNumeroConveniado.getText());
+                Pet pet = new Pet(null);
+                pet.setId(Integer.parseInt(txtIdPet.getText()));
+                pet = petDAO.buscaID(pet);
                 if (pet != null) {
-                    txtNomePet.setText(pet.getNome());
-                    txtEspeciePet.setText(pet.getEspecie());
-                    txtRacaPet.setText(pet.getRaca());
-                    cbDonos.setValue(pet.getDono());
-                    datePickerNascimento.setValue(pet.getDataNascimento());
+                    carregar_Campos(pet);
+                    // Habilita os botões após a consulta bem-sucedida
+                    btnAlterarPet.setDisable(false);
+                    btnExcluirPet.setDisable(false);
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM NÚMERO CONVENIADO INFORMADO NÃO ENCONTRADO.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "PET COM ID INFORMADO NÃO ENCONTRADO.");
+                    // Desabilita os botões se a consulta falhar
+                    btnAlterarPet.setDisable(true);
+                    btnExcluirPet.setDisable(true);
+                    // Define o objeto pet como null se a consulta falhar
+                    pet = null;
                 }
             } catch (SQLException e) {
                 showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO CONSULTAR PET: " + e.getMessage());
@@ -210,5 +220,33 @@ public class GerenciarPetsController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
     }
-    
+
+    private Pet carregar_Pet() {
+        Pet pet = new Pet(null);
+        pet.setId(Integer.parseInt(txtIdPet.getText()));
+        pet.setNome(txtNomePet.getText());
+        pet.setEspecie(txtEspeciePet.getText());
+        pet.setRaca(txtRacaPet.getText());
+        pet.setNumeroConveniado(txtNumeroConveniado.getText());
+        pet.setDataNascimento(datePickerNascimento.getValue());
+        pet.setDono(cbDonos.getValue());
+
+        return pet;
+    }
+
+    private void carregar_Campos(Pet pet) {
+        txtIdPet.setText(String.valueOf(pet.getId()));
+        txtNomePet.setText(pet.getNome());
+        txtEspeciePet.setText(pet.getEspecie());
+        txtRacaPet.setText(pet.getRaca());
+        txtNumeroConveniado.setText(pet.getNumeroConveniado());
+        datePickerNascimento.setValue(pet.getDataNascimento());
+        cbDonos.setValue(pet.getDono());
+    }
+
+    private void setNextAvailableId() throws SQLException {
+        int nextId = petDAO.getNextId();
+        txtIdPet.setPromptText(String.valueOf(nextId));
+    }
+
 }

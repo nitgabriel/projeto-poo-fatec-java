@@ -17,12 +17,12 @@
          <children>
             <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
          </children></Pane>  
-      <Label layoutX="122.0" layoutY="168.0" text="NOME">
+      <Label layoutX="415.0" layoutY="168.0" text="NOME">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtNomeVeterinario" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtNomeVeterinario" layoutX="415.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
          
         
       <Button fx:id="btnRegistrarVeterinario" layoutX="683.0" layoutY="147.0" maxHeight="45.0" maxWidth="200.0" minHeight="45.0" minWidth="200.0" mnemonicParsing="false" onAction="#btnRegistrarVeterinario_Click" prefHeight="45.0" prefWidth="200.0" styleClass="botoesVets" text="REGISTRAR" textAlignment="JUSTIFY" textFill="WHITE">
@@ -53,17 +53,23 @@
          </font>
       </Label>
       <TextField fx:id="txtEspecialidade" layoutX="122.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="419.0" layoutY="168.0" text="CRMV">
+      <Label layoutX="415.0" layoutY="234.0" text="CRMV">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtCrmv" layoutX="419.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="419.0" layoutY="234.0" text="STATUS">
+      <TextField fx:id="txtCrmv" layoutX="415.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="415.0" layoutY="300.0" text="STATUS">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtStatus" layoutX="419.0" layoutY="258.0" prefHeight="25.0" prefWidth="181.0" />        
+      <TextField fx:id="txtStatus" layoutX="415.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtIdVeterinario" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="122.0" layoutY="168.0" text="ID VETERINARIO">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>        
     </children>
 </AnchorPane>

@@ -68,6 +68,7 @@ public class UnidadeDAO implements DAO<Unidade> {
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setInt(1, model.getIdUnidade());
         rs = pst.executeQuery();
+        unidade = null;
         if (rs.next()) {
             unidade = new Unidade(
                     rs.getInt("idUnidade"), 

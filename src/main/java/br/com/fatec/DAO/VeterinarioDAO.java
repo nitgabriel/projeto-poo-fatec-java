@@ -64,6 +64,7 @@ public class VeterinarioDAO implements DAO<Veterinario> {
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setInt(1, model.getIdVeterinario());
         rs = pst.executeQuery();
+        veterinario = null;
         if (rs.next()) {
             UnidadeDAO unidadeDAO = new UnidadeDAO();
             Unidade unidade = new Unidade();
@@ -86,6 +87,7 @@ public class VeterinarioDAO implements DAO<Veterinario> {
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
         rs = pst.executeQuery();
+
         while (rs.next()) {
             UnidadeDAO unidadeDAO = new UnidadeDAO();
             Unidade unidade = new Unidade();
@@ -99,21 +101,16 @@ public class VeterinarioDAO implements DAO<Veterinario> {
         return listagem;
     }
 
-    public Veterinario buscaPorCrmv(String crmv) throws SQLException {
-        String sql = "SELECT * FROM Veterinarios WHERE crmv = ?;";
+    public int getNextId() throws SQLException {
+        String sql = "SELECT COALESCE(MAX(idVeterinario), 0) + 1 AS nextId FROM Veterinarios;";
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
-        pst.setString(1, crmv);
         rs = pst.executeQuery();
-        Veterinario veterinario = null;
+        int nextId = 1; // VALOR PADRÃO
         if (rs.next()) {
-            UnidadeDAO unidadeDAO = new UnidadeDAO();
-            Unidade unidade = new Unidade();
-            unidade.setIdUnidade(rs.getInt("idUnidade"));
-            unidade = unidadeDAO.buscaID(unidade);
-            veterinario = new Veterinario(rs.getInt("idVeterinario"), rs.getString("nome"), rs.getString("crmv"), unidade, rs.getString("status"), rs.getString("especialidade"));
+            nextId = rs.getInt("nextId");
         }
         Banco.desconectar();
-        return veterinario;
+        return nextId;
     }
 }

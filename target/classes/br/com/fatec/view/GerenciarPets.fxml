@@ -14,20 +14,20 @@
     </stylesheets>
    <children>
       <Pane id="gerenciaPetsTop" layoutX="-2.0" prefHeight="117.0" prefWidth="932.0" stylesheets="@../styles/gerenciarpets.css" />
-      <Label layoutX="122.0" layoutY="168.0" text="NOME">
+      <Label layoutX="130.0" layoutY="234.0" text="NOME">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtNomePet" layoutX="122.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
-      <TextField fx:id="txtEspeciePet" layoutX="122.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="122.0" layoutY="234.0" text="ESPÉCIE">
+      <TextField fx:id="txtNomePet" layoutX="130.0" layoutY="259.0" prefHeight="25.0" prefWidth="181.0" />
+      <TextField fx:id="txtEspeciePet" layoutX="130.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="130.0" layoutY="300.0" text="ESPÉCIE">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="txtRacaPet" layoutX="122.0" layoutY="325.0" prefHeight="25.0" prefWidth="181.0" />
-      <Label layoutX="122.0" layoutY="300.0" text="RAÇA">
+      <TextField fx:id="txtRacaPet" layoutX="130.0" layoutY="391.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="130.0" layoutY="366.0" text="RAÇA">
          <font>
             <Font name="Arial Bold" size="14.0" />
          </font>
@@ -67,5 +67,11 @@
             <Font name="Arial Bold" size="12.0" />
          </font></Button>
       <Label fx:id="lblMenu" layoutX="6.0" layoutY="6.0" onMouseClicked="#lblMenu_Click" text="Menu" />
+      <TextField fx:id="txtIdPet" layoutX="130.0" layoutY="193.0" prefHeight="25.0" prefWidth="181.0" />
+      <Label layoutX="130.0" layoutY="168.0" text="ID PET">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

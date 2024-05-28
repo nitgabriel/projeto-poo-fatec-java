@@ -6,6 +6,7 @@ import br.com.fatec.persistencia.Banco;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -66,6 +67,7 @@ public class PetDAO implements DAO<Pet> {
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setInt(1, model.getId());
         rs = pst.executeQuery();
+        pet = null;
         if (rs.next()) {
             DonoDAO donoDAO = new DonoDAO();
             Dono dono = new Dono();
@@ -99,22 +101,17 @@ public class PetDAO implements DAO<Pet> {
         return listagem;
     }
 
-    public Pet buscaPorNumeroConveniado(String numeroConveniado) throws SQLException {
-        String sql = "SELECT * FROM Pets WHERE numeroConveniado = ?;";
+    public int getNextId() throws SQLException {
+        String sql = "SELECT COALESCE(MAX(idPet), 0) + 1 AS nextId FROM Pets;";
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
-        pst.setString(1, numeroConveniado);
         rs = pst.executeQuery();
+        int nextId = 1; // VALOR PADRÃO
         if (rs.next()) {
-            DonoDAO donoDAO = new DonoDAO();
-            Dono dono = new Dono();
-            dono.setIdDono(rs.getInt("idDono"));
-            dono = donoDAO.buscaID(dono);
-            pet = new Pet(rs.getInt("idPet"), rs.getString("nome"), rs.getString("especie"), rs.getString("numeroConveniado"), rs.getString("raca"), rs.getDate("dataNascimento").toLocalDate(), dono);
+            nextId = rs.getInt("nextId");
         }
         Banco.desconectar();
-        return pet;
+        return nextId;
     }
-
 
 }

@@ -55,6 +55,8 @@ public class GerenciarProprietariosController implements Initializable {
     private DonoDAO donoDAO = new DonoDAO();
 
     private List<TextField> fields;
+    @FXML
+    private TextField txtIdDono;
 
     /**
      * Initializes the controller class.
@@ -72,96 +74,121 @@ public class GerenciarProprietariosController implements Initializable {
         };
         txtCpfProprietario.setTextFormatter(new TextFormatter<String>(filter));
         txtContatoProprietario.setTextFormatter(new TextFormatter<String>(filter));
+        // Bloqueando botões para apenas for possível realizar operações após fazer uma consulta.
+        btnAlterarProprietario.setDisable(true);
+        btnExcluirProprietario.setDisable(true);
 
-        fields = Arrays.asList(txtNomeProprietario, txtCpfProprietario, txtContatoProprietario, txtEmailProprietario, txtPagamentoProprietario);
+        fields = Arrays.asList(txtIdDono, txtNomeProprietario, txtCpfProprietario, txtContatoProprietario, txtEmailProprietario, txtPagamentoProprietario);
+        try {
+            setNextAvailableId();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.WARNING, "ERRO", "ERRO AO RESGATAR DADOS!" + e.getMessage());
+        }
 
     }
 
     @FXML
-    private void btnRegistrarProprietario_Click(ActionEvent event) throws SQLException {
+    private void btnRegistrarProprietario_Click(ActionEvent event) {
         if (fields.stream().anyMatch(field -> field.getText().isEmpty())) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR INSERIR DADOS NO SISTEMA.");
         } else {
-            Dono dono = new Dono();
-            dono.setNome(txtNomeProprietario.getText());
-            dono.setCpf(txtCpfProprietario.getText());
-            dono.setContato(txtContatoProprietario.getText());
-            dono.setEmail(txtEmailProprietario.getText());
-            dono.setFormaPagamento(txtPagamentoProprietario.getText());
-            if(donoDAO.insere(dono)) {
-                showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS INSERIDOS COM SUCESSO.");
-                fields.forEach(field -> field.clear());
-            } else {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO INSERIR DADOS.");
+            Dono dono = carregar_Dono();
+            try {
+                if (donoDAO.insere(dono)) {
+                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DONO REGISTRADO COM SUCESSO.");
+                    fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                    setNextAvailableId();
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR DONO.");
+                }
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REGISTRAR DONO: " + e.getMessage());
             }
         }
     }
 
     @FXML
-    private void btnAlterarProprietario_Click(ActionEvent event) throws SQLException {
+    private void btnAlterarProprietario_Click(ActionEvent event) {
         if (fields.stream().anyMatch(field -> field.getText().isEmpty())) {
             showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA TODOS OS CAMPOS ANTES DE TENTAR ALTERAR DADOS NO SISTEMA.");
         } else {
-            Dono dono = new Dono();
-            dono.setCpf(txtCpfProprietario.getText());
-            dono = donoDAO.buscaCPF(dono);
-            if (dono != null) {
-                dono.setNome(txtNomeProprietario.getText());
-                dono.setCpf(txtCpfProprietario.getText());
-                dono.setContato(txtContatoProprietario.getText());
-                dono.setEmail(txtEmailProprietario.getText());
-                dono.setFormaPagamento(txtPagamentoProprietario.getText());
-
-                if(donoDAO.altera(dono)) {
-                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS ALTERADOS COM SUCESSO.");
-                    fields.forEach(field -> field.clear());
+            try {
+                Dono dono = new Dono();
+                dono.setIdDono(Integer.parseInt(txtIdDono.getText()));
+                dono = donoDAO.buscaID(dono);
+                if (dono != null) {
+                    dono = carregar_Dono(); // Atualiza os dados do dono com os valores dos campos
+                    if (donoDAO.altera(dono)) {
+                        showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DONO ALTERADO COM SUCESSO.");
+                        fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                        setNextAvailableId();
+                        // Bloqueando botões para ser necessário fazer uma nova consulta para realizar as seguintes operações
+                        btnAlterarProprietario.setDisable(true);
+                        btnExcluirProprietario.setDisable(true);
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR DONO.");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL ALTERAR OS DADOS.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "DONO COM ID INFORMADO NÃO ENCONTRADO.");
                 }
-
-            } else {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "CPF NÃO ENCONTRADO.");
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO ALTERAR DONO: " + e.getMessage());
             }
         }
     }
 
     @FXML
-    private void btnExcluirProprietario_Click(ActionEvent event) throws SQLException {
-        if (txtCpfProprietario.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O CPF PARA EXCLUIR OS DADOS DO DONO.");
+    private void btnExcluirProprietario_Click(ActionEvent event) {
+        if (txtIdDono.getText().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O ID DO DONO PARA EXCLUIR OS DADOS.");
         } else {
-            Dono dono = new Dono();
-            dono.setCpf(txtCpfProprietario.getText());
-            dono = donoDAO.buscaCPF(dono);
-            if (dono != null)  {
-                if(donoDAO.remove(dono)) {
-                    showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DADOS REMOVIDOS COM SUCESSO.");
-                    fields.forEach(field -> field.clear());
+            try {
+                Dono dono = new Dono();
+                dono.setIdDono(Integer.parseInt(txtIdDono.getText()));
+                dono = donoDAO.buscaID(dono);
+                if (dono != null) {
+                    if (donoDAO.remove(dono)) {
+                        showAlert(Alert.AlertType.INFORMATION, "INFORMAÇÃO", "DONO REMOVIDO COM SUCESSO.");
+                        fields.forEach(field -> field.clear()); // Limpa os campos para a próxima entrada
+                        setNextAvailableId();
+
+                        // Bloqueando botões para ser necessário fazer uma nova consulta para realizar as seguintes operações
+                        btnAlterarProprietario.setDisable(true);
+                        btnExcluirProprietario.setDisable(true);
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL REMOVER O DONO.");
+                    }
                 } else {
-                    showAlert(Alert.AlertType.WARNING, "AVISO", "NÃO FOI POSSÍVEL EXCLUIR OS DADOS.");
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "DONO COM ID INFORMADO NÃO ENCONTRADO.");
                 }
-            } else {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "CPF NÃO ENCONTRADO.");
+            } catch (SQLException e) {
+                showAlert(Alert.AlertType.ERROR, "ERRO", "ERRO AO REMOVER DONO: " + e.getMessage());
             }
         }
     }
 
     @FXML
-    private void btnConsultarProprietario_Click(ActionEvent event) throws SQLException {
-        if (txtCpfProprietario.getText().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "AVISO", "PREENCHA O CPF PARA CONSULTAR OS DADOS DO DONO.");
+    private void btnConsultarProprietario_Click(ActionEvent event) {
+        if (txtIdDono.getText().isEmpty()) {
+            // ...
         } else {
-            Dono dono = new Dono();
-            dono.setCpf(txtCpfProprietario.getText());
-            dono = donoDAO.buscaCPF(dono);
-            if (dono != null) {
-                txtNomeProprietario.setText(dono.getNome());
-                txtCpfProprietario.setText(dono.getCpf());
-                txtContatoProprietario.setText(dono.getContato());
-                txtEmailProprietario.setText(dono.getEmail());
-                txtPagamentoProprietario.setText(dono.getFormaPagamento());
-            } else {
-                showAlert(Alert.AlertType.WARNING, "AVISO", "CPF NÃO ENCONTRADO.");
+            try {
+                Dono dono = new Dono();
+                dono.setIdDono(Integer.parseInt(txtIdDono.getText()));
+                dono = donoDAO.buscaID(dono);
+                if (dono != null) {
+                    carregar_Campos(dono);
+                    // Habilita os botões após a consulta bem-sucedida
+                    btnAlterarProprietario.setDisable(false);
+                    btnExcluirProprietario.setDisable(false);
+                } else {
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "DONO COM ID INFORMADO NÃO ENCONTRADO.");
+                    // Desabilita os botões se a consulta falhar
+                    btnAlterarProprietario.setDisable(true);
+                    btnExcluirProprietario.setDisable(true);
+                }
+            } catch (SQLException e) {
+                // ...
             }
         }
     }
@@ -181,6 +208,33 @@ public class GerenciarProprietariosController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private Dono carregar_Dono() {
+        Dono dono = new Dono();
+        dono.setIdDono(Integer.parseInt(txtIdDono.getText()));
+        dono.setNome(txtNomeProprietario.getText());
+        dono.setCpf(txtCpfProprietario.getText());
+        dono.setContato(txtContatoProprietario.getText());
+        dono.setEmail(txtEmailProprietario.getText());
+        dono.setFormaPagamento(txtPagamentoProprietario.getText());
+
+        return dono;
+    }
+
+    // Adicione este método na classe GerenciarProprietariosController
+    private void carregar_Campos(Dono dono) {
+        txtIdDono.setText(String.valueOf(dono.getIdDono()));
+        txtNomeProprietario.setText(dono.getNome());
+        txtCpfProprietario.setText(dono.getCpf());
+        txtContatoProprietario.setText(dono.getContato());
+        txtEmailProprietario.setText(dono.getEmail());
+        txtPagamentoProprietario.setText(dono.getFormaPagamento());
+    }
+
+    private void setNextAvailableId() throws SQLException {
+        int nextId = donoDAO.getNextId();
+        txtIdDono.setPromptText(String.valueOf(nextId));
     }
     
 }

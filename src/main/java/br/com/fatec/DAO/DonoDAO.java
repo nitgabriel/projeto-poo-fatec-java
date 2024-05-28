@@ -63,6 +63,7 @@ public class DonoDAO implements DAO<Dono> {
         pst = Banco.getConexao().prepareStatement(sql);
         pst.setInt(1, model.getIdDono());
         rs = pst.executeQuery();
+        dono = null;
         if (rs.next()) {
             dono = new Dono(rs.getInt("idDono"), rs.getString("nome"), rs.getString("email"), rs.getString("cpf"), rs.getString("formaPagamento"), rs.getString("contato"));
         }
@@ -88,16 +89,16 @@ public class DonoDAO implements DAO<Dono> {
         return listagem;
     }
 
-    public Dono buscaCPF (Dono model) throws SQLException {
-        String sql = "SELECT * FROM Donos WHERE cpf = ?;";
+    public int getNextId() throws SQLException {
+        String sql = "SELECT COALESCE(MAX(idDono), 0) + 1 AS nextId FROM Donos;";
         Banco.conectar();
         pst = Banco.getConexao().prepareStatement(sql);
-        pst.setString(1, model.getCpf());
         rs = pst.executeQuery();
+        int nextId = 1; // VALOR PADRÃO
         if (rs.next()) {
-            dono = new Dono(rs.getInt("idDono"), rs.getString("nome"), rs.getString("email"), rs.getString("cpf"), rs.getString("formaPagamento"), rs.getString("contato"));
+            nextId = rs.getInt("nextId");
         }
         Banco.desconectar();
-        return dono;
+        return nextId;
     }
 }
