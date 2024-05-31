@@ -196,6 +196,8 @@ public class GerenciarAgendamentosController implements Initializable {
                         } else if (control instanceof DatePicker) {
                             ((DatePicker) control).getEditor().clear();
                         }
+                        dpDataAgend.setValue(null);
+                        tbViewAgendamentos.getItems().clear();
                     });
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR AGENDAMENTO.");
@@ -232,7 +234,10 @@ public class GerenciarAgendamentosController implements Initializable {
                             } else if (control instanceof DatePicker) {
                                 ((DatePicker) control).getEditor().clear();
                             }
+                            dpDataAgend.setValue(null);
+                            tbViewAgendamentos.getItems().clear();
                         });
+
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR AGENDAMENTO.");
                     }
@@ -265,6 +270,8 @@ public class GerenciarAgendamentosController implements Initializable {
                             } else if (control instanceof DatePicker) {
                                 ((DatePicker) control).getEditor().clear();
                             }
+                            dpDataAgend.setValue(null);
+                            tbViewAgendamentos.getItems().clear();
                         });
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO EXCLUIR AGENDAMENTO.");

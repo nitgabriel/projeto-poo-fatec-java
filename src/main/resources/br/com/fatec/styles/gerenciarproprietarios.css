@@ -15,3 +15,8 @@
 .botoesDonos{
     -fx-background-color: #ff842c;
 }
+
+.botoesDonos:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

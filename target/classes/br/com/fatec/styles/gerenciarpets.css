@@ -15,3 +15,8 @@
 .botoesPets{
     -fx-background-color: #ff842c;
 }
+
+botoesPets:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

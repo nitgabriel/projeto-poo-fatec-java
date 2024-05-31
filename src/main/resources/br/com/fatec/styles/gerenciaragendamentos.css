@@ -18,3 +18,8 @@
     -fx-pref-width: 150px;
     -fx-min-width: 150px;
 }
+
+.botoesAgend:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

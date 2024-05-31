@@ -15,3 +15,8 @@
 .botoesVets{
     -fx-background-color: #ff842c;
 }
+
+.botoesVets:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

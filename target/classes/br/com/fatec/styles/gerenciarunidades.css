@@ -15,3 +15,8 @@
 .botoesUnidade{
     -fx-background-color: #ff842c;
 }
+
+.botoesUnidade:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

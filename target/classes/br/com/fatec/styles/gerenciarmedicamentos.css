@@ -15,3 +15,8 @@
 .botoesMeds{
     -fx-background-color: #ff842c;
 }
+
+.botoesMeds:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}

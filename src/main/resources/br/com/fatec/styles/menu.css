@@ -20,3 +20,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 .botoesMain{
     -fx-background-color: #ff842c;
 }
+
+.botoesMain:hover{
+    -fx-cursor: hand;
+    -fx-fill: black;
+}
