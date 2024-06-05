@@ -11,8 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 public class AgendamentoDAO implements DAO<Agendamento> {
 
@@ -177,5 +176,18 @@ public class AgendamentoDAO implements DAO<Agendamento> {
         }
         Banco.desconectar();
         return agendamento;
+    }
+
+    public Set<LocalDate> getFullDays() throws SQLException {
+        Set<LocalDate> fullDays = new HashSet<>();
+        String sql = "SELECT data FROM agendamentos GROUP BY data HAVING COUNT(*) = 7";
+        Banco.conectar();
+        pst = Banco.getConexao().prepareStatement(sql);
+        rs = pst.executeQuery();
+        while (rs.next()) {
+            LocalDate date = rs.getDate("data").toLocalDate();
+            fullDays.add(date);
+        }
+        return fullDays;
     }
 }

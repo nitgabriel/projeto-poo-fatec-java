@@ -74,11 +74,19 @@ public class GerenciarAgendamentosController implements Initializable {
     @FXML
     private TableView<Agendamento> tbViewAgendamentos;
 
+    private Set<LocalDate> fullDays;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
+        try {
+            fullDays = agendamentoDAO.getFullDays();
+        } catch (SQLException e) {
+            showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ACESSAR OS DADOS DO DATEPICKER.");
+        }
         controls = Arrays.asList(txtEspecialidade, dpDataAgend, cbDonos, cbPets, cbUnidade, cbHorarios, cbVeterinarios);
         dpDataAgend.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -99,7 +107,7 @@ public class GerenciarAgendamentosController implements Initializable {
                         tbViewAgendamentos.setItems(getAgendamentosPorData(newValue));
                     }
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ACESSAR OS DADOS.");
                 }
             }
         });
@@ -152,14 +160,8 @@ public class GerenciarAgendamentosController implements Initializable {
                     public void updateItem(LocalDate item, boolean empty) {
                         super.updateItem(item, empty);
 
-                        AgendamentoDAO agendamentoDAO = new AgendamentoDAO();
-                        try {
-                            Collection<Agendamento> agendamentos = agendamentoDAO.lista("data = '" + item + "'");
-                            if (agendamentos.size() == 7) { // Se todos os 7 horários do dia estiverem agendados
-                                setStyle("-fx-background-color: #ff4444;");
-                            }
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        if (fullDays.contains(item)) {
+                            setStyle("-fx-background-color: #ff4444;");
                         }
                     }
                 };
@@ -196,9 +198,12 @@ public class GerenciarAgendamentosController implements Initializable {
                         } else if (control instanceof DatePicker) {
                             ((DatePicker) control).getEditor().clear();
                         }
+
                         dpDataAgend.setValue(null);
                         tbViewAgendamentos.getItems().clear();
                     });
+
+                    fullDays = agendamentoDAO.getFullDays();
                 } else {
                     showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO REGISTRAR AGENDAMENTO.");
                 }
@@ -238,6 +243,8 @@ public class GerenciarAgendamentosController implements Initializable {
                             tbViewAgendamentos.getItems().clear();
                         });
 
+                        fullDays = agendamentoDAO.getFullDays();
+
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO ALTERAR AGENDAMENTO.");
                     }
@@ -273,6 +280,8 @@ public class GerenciarAgendamentosController implements Initializable {
                             dpDataAgend.setValue(null);
                             tbViewAgendamentos.getItems().clear();
                         });
+
+                        fullDays = agendamentoDAO.getFullDays();
                     } else {
                         showAlert(Alert.AlertType.WARNING, "AVISO", "ERRO AO EXCLUIR AGENDAMENTO.");
                     }
